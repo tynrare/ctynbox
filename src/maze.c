@@ -194,7 +194,7 @@ state->pawn.playerTurn);
     float x = state->pawn.playerPosition.x - sinf(state->pawn.cameraRot);
     float y = state->pawn.playerPosition.y - cosf(state->pawn.cameraRot);
     state->camera.position.x = lerp(state->camera.position.x, x, 0.5f);
-    state->camera.position.y = 3.0f;
+    state->camera.position.y = 5.0f;
     state->camera.position.z = lerp(state->camera.position.z, y, 0.5f);
     state->camera.target.x =
         lerp(state->camera.target.x, state->pawn.playerPosition.x, 0.55f);
