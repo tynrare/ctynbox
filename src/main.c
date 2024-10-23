@@ -12,8 +12,8 @@
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static const int VIEWPORT_W = 1024;
-static const int VIEWPORT_H = 1024;
+static const int VIEWPORT_W = 512;
+static const int VIEWPORT_H = 512;
 
 static int viewport_w = VIEWPORT_W;
 static int viewport_h = VIEWPORT_H;
@@ -100,7 +100,7 @@ static void equilizer() {
     viewport_h = vh;
     // init();
   }
-}
+}   
 
 void step(void)
 {
