@@ -8,5 +8,11 @@ int min(int a, int b);
 float lerp(float a, float b, float t);
 float rlerp(float a, float b, float t);
 float dlerp(float a, float b, float decay, float dt);
-                
+
+#ifdef __DEBUG__
+#define RES_PATH "res/"
+#else
+#define RES_PATH "../res/"
+#endif
+
 #endif
