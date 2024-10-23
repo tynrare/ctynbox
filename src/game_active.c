@@ -73,7 +73,9 @@ G231012_GameState *G231012_Init(TynStage *stage) {
   state->botConfig = botConfig;
   state->bulletConfig = bulletConfig;
 
-  state->camera.offset = (Vector2){ 256, 256 };
+  const int hsw = GetScreenWidth() / 2;
+  const int hsh = GetScreenHeight() / 2;
+  state->camera.offset = (Vector2){ hsw, hsh };
   state->camera.target = (Vector2){ 256, 256 };
   state->camera.rotation = 0;
   state->camera.zoom= 1;
@@ -267,6 +269,9 @@ static void StepBots(G231012_GameState *state) {
 
 static void camera_step(G231012_GameState *state) {
   state->camera.target = Vector2Lerp(state->camera.target, state->pawn.targetPosition, 0.01);
+  const int hsw = GetScreenWidth() / 2;
+  const int hsh = GetScreenHeight() / 2;
+  state->camera.offset = (Vector2){ hsw, hsh };
 }
 
 static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
@@ -357,6 +362,7 @@ static void G231012Draw(G231012_GameState *state) {
                  (Rectangle){0, 0, 1024, 1024}, (Vector2){0, 0}, 0, WHITE);
   DrawText("TAB to open console.\n? to display commands", 16, 200, 20,
            LIGHTGRAY);
+  DrawFPS(16, 240);
 
   SpriteDraw(&state->assets.playership);
   SpriteDraw(&state->assets.locationmark);
