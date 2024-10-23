@@ -43,7 +43,7 @@ static void _draw(Draft0State *state) {
   BeginMode2D(state->camera);
 
   // DrawRectangle(0, 0, 16, 16, RED);
-	int rec_pad = 4;
+	int rec_pad = 1;
   Rectangle rec = (Rectangle){rec_pad, rec_pad,
                               RENDER_WIDTH - rec_pad * 2, RENDER_HEIGHT - rec_pad * 2};
   DrawRectangleRounded(rec, 0.2, 4, BLUE);
