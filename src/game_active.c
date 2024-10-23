@@ -1,7 +1,8 @@
-#include "include/game_231012.h"
+#include "include/game_active.h"
 #include "include/tyncommons.h"
 #include "raymath.h"
 #include <stdlib.h>
+#include "raylib.h"
 
 #define DEBUG 0
 
@@ -71,6 +72,13 @@ G231012_GameState *G231012_Init(TynStage *stage) {
   state->pawnConfig = pawnConfig;
   state->botConfig = botConfig;
   state->bulletConfig = bulletConfig;
+
+  state->camera.offset = (Vector2){ 256, 256 };
+  state->camera.target = (Vector2){ 256, 256 };
+  state->camera.rotation = 0;
+  state->camera.zoom= 1;
+
+
 
   state->bots =
       (G231012_PawnState *)MemAlloc(sizeof(G231012_PawnState) * BOTS_COUNT);
@@ -257,6 +265,10 @@ static void StepBots(G231012_GameState *state) {
   }
 }
 
+static void camera_step(G231012_GameState *state) {
+  state->camera.target = Vector2Lerp(state->camera.target, state->pawn.targetPosition, 0.01);
+}
+
 static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
   // pre
   Vector2 mousepos = GetMousePosition();
@@ -270,7 +282,7 @@ static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
   }
 
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-    state->pawn.targetPosition = mousepos;
+    state->pawn.targetPosition = Vector2Add(Vector2Subtract(state->camera.target, state->camera.offset), mousepos);
   }
 
   float closest_dist = Vector2Distance(mousepos, state->pawn.position);
@@ -304,6 +316,7 @@ static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
   StepPawnAction(state, &state->pawn, &state->pawnConfig);
   StepBots(state);
   StepBullets(state);
+  camera_step(state);
 
   state->assets.crosshair.position = mousepos;
   state->assets.locationmark.position = state->pawn.targetPosition;
@@ -338,16 +351,22 @@ static void DrawBots(G231012_GameState *state) {
 }
 
 static void G231012Draw(G231012_GameState *state) {
+  BeginMode2D(state->camera);
+
   DrawTexturePro(state->assets.tilefloor.texture, (Rectangle){0, 0, 1024, 1024},
                  (Rectangle){0, 0, 1024, 1024}, (Vector2){0, 0}, 0, WHITE);
   DrawText("TAB to open console.\n? to display commands", 16, 200, 20,
            LIGHTGRAY);
 
-  SpriteDraw(&state->assets.crosshair);
   SpriteDraw(&state->assets.playership);
   SpriteDraw(&state->assets.locationmark);
   DrawBots(state);
   DrawBullets(state);
+
+  EndMode2D();
+
+  SpriteDraw(&state->assets.crosshair);
+
 
 #if DEBUG
   DrawLine(state->pawn.position.x, state->pawn.position.y,

@@ -64,6 +64,7 @@ typedef struct G231012_GameState {
 	Sprite *bot_sprites;
 	G231012_BulletState *bullets;
 	Sprite *bullet_sprites;
+	Camera2D camera;
 } G231012_GameState;
 
 G231012_GameState *G231012_Init(TynStage *stage);
