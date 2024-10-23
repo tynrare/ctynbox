@@ -73,6 +73,6 @@ static void _draw(Draft0State *state) {
   DrawTexturePro(state->render_target.texture, source, dest, (Vector2){0, 0}, 0,
                  WHITE);
 
-  DrawText("Press TAB.", 16, 470, 32, WHITE);
+  DrawText("Press TAB.", 16, 440, 32, WHITE);
   return;
 }
