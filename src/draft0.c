@@ -72,5 +72,7 @@ static void _draw(Draft0State *state) {
       (Rectangle){(w - w * ratio) / 2, 0, w * ratio, GetScreenHeight()};
   DrawTexturePro(state->render_target.texture, source, dest, (Vector2){0, 0}, 0,
                  WHITE);
+
+  DrawText("Press TAB.", 16, 470, 32, WHITE);
   return;
 }

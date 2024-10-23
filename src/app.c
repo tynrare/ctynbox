@@ -88,11 +88,15 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
     CloseWindow();
     *flags |= STAGEFLAG_DISABLED;
   } else if (strcmp(command, "?") == 0) {
-    return "type: time\n\ntype: run game0\ntype: run maze\ntype: run "
-           "shadertest0\ntype: run networktest0\n\ntype: "
-           "run collisiontest0\ntype: run platformer0\ntype: stopgame\n"
-           "disabled:\n type: run editor\ntype: run rendertest0";
-  } else if (strcmp(command, "time") == 0) {
+    return "info commands:\n"
+    " ?time\n ?play\n"
+    "\naction commands:\n"
+    " stopgame\n  ";
+  } else if (strcmp(command, "?play") == 0) {
+    return "type: 'run X'; where X:\n"
+            " game0, maze, shadertest0, \n networktest0, collisiontest0, platformer0.\n"        
+           "\ndisabled:\n editor\n rendertest0";
+  }else if (strcmp(command, "?time") == 0) {
     return "4:20";
   } else if (strcmp(command, "run editor") == 0) {
     AppCleanupStages(state);

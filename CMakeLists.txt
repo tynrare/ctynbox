@@ -25,10 +25,23 @@ endif()
 
 # Our Project
 
+
+set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+# Indication to the code that this is a debug build
+if (${IS_DEBUG_BUILD})
+    add_compile_definitions(__DEBUG__)
+endif ()
+
+find_package(OpenGL REQUIRED)
+
 set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS "src/*.c")
 add_executable(${PROJECT_NAME} ${sources})
 #set(raylib_VERBOSE 1)
-target_link_libraries(${PROJECT_NAME} raylib)
+target_link_libraries(${PROJECT_NAME} raylib m)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-incompatible-function-pointer-types")
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/res
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=incompatible-pointer-types")

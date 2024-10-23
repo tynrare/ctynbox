@@ -86,6 +86,7 @@ void Console_Init(TynStage *stage) {
   state->inputstring[0] = '\0';
   state->inputcommand[0] = '\0';
   state->outputstring[0] = '\0';
+  strcpy(state->outputstring, "type [? ENTER]");
   state->inputlength = 0;
   state->ready = false;
 

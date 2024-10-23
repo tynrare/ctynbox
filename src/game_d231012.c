@@ -26,7 +26,16 @@ static void PawnPointerControls(struct G231012_PawnState *state,
                                 struct G231012_PawnConfig *config);
 static void G231012Draw(G231012_GameState *state);
 static STAGEFLAG G231012Step(G231012_GameState *state, int flags);
+
 static void G231012Dispose(G231012_GameState *state);
+static void G231012Dispose(G231012_GameState *state) {
+  UnloadTexture(state->assets.crosshair.texture);
+  UnloadTexture(state->assets.playership.texture);
+  UnloadTexture(state->assets.tilefloor.texture);
+  UnloadTexture(state->assets.locationmark.texture);
+  UnloadTexture(state->assets.botship.texture);
+  MemFree(state->bots);
+}
 
 G231012_GameAssets load() {
   G231012_GameAssets ga = {
@@ -94,14 +103,6 @@ G231012_GameState *G231012_Init(TynStage *stage) {
   return stage->state;
 }
 
-static void G231012Dispose(G231012_GameState *state) {
-  UnloadTexture(state->assets.crosshair.texture);
-  UnloadTexture(state->assets.playership.texture);
-  UnloadTexture(state->assets.tilefloor.texture);
-  UnloadTexture(state->assets.locationmark.texture);
-  UnloadTexture(state->assets.botship.texture);
-  MemFree(state->bots);
-}
 
 static void StepPawn(G231012_PawnState *pawn, G231012_PawnConfig *config,
                      Sprite *sprite) {
