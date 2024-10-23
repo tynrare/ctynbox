@@ -89,49 +89,53 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
     *flags |= STAGEFLAG_DISABLED;
   } else if (strcmp(command, "?") == 0) {
     return "info commands:\n"
-    " ?time\n ?play\n"
+    " > ?time\n > ?play\n > ?maze\n"
     "\naction commands:\n"
-    " stopgame\n  ";
+    " > close stage \n > exit\n";
   } else if (strcmp(command, "?play") == 0) {
-    return "type: 'run X'; where X:\n"
+    return "type: 'cd X'; where X:\n"
             " game0, maze, shadertest0, \n networktest0, collisiontest0, platformer0.\n"        
            "\ndisabled:\n editor\n rendertest0";
-  }else if (strcmp(command, "?time") == 0) {
+  } else if (strcmp(command, "?time") == 0) {
     return "4:20";
-  } else if (strcmp(command, "run editor") == 0) {
+  } else if (strcmp(command, "cd editor") == 0) {
     AppCleanupStages(state);
     //AppNewStage(state, editor0_init);
     return "first actual demo here";
-  } else if (strcmp(command, "run game0") == 0) {
+  } else if (strcmp(command, "cd game0") == 0) {
     AppCleanupStages(state);
     AppNewStage(state, G231012_Init);
     return "first actual demo here";
-  } else if (strcmp(command, "run maze") == 0) {
+  } else if (strcmp(command, "?maze") == 0) {
+    return "\nmaze commands (in [cd maze] mode):\n"
+    " mode fp, mode topdown, mode free\n";
+  } else if (strcmp(command, "cd maze") == 0) {
     AppCleanupStages(state);
     AppNewStage(state, TynmazeInit);
     return "Maze game";
-  } else if (strcmp(command, "run shadertest0") == 0) {
+  } else if (strcmp(command, "cd shadertest0") == 0) {
     AppCleanupStages(state);
     AppNewStage(state, TestShader0Init);
     return "Shader with game props data stored in texture";
-  } else if (strcmp(command, "run networktest0") == 0) {
+  } else if (strcmp(command, "cd networktest0") == 0) {
     AppCleanupStages(state);
     AppNewStage(state, TestNetworksim0Init);
     return "wip network movement";
-  } else if (strcmp(command, "run rendertest0") == 0) {
+  } else if (strcmp(command, "cd rendertest0") == 0) {
     AppCleanupStages(state);
     //AppNewStage(state, TestRender0Init);
     return "wip render test";
-  } else if (strcmp(command, "run collisiontest0") == 0) {
+  } else if (strcmp(command, "cd collisiontest0") == 0) {
     AppCleanupStages(state);
     AppNewStage(state, TestCollisions0Init);
     return "wip physics test";
-  } else if (strcmp(command, "run platformer0") == 0) {
+  } else if (strcmp(command, "cd platformer0") == 0) {
     AppCleanupStages(state);
     AppNewStage(state, GamePlatformer0Init);
     return "platformer test";
-  } else if (strcmp(command, "stopgame") == 0) {
+  } else if (strcmp(command, "close stage ..") == 0) {
     AppCleanupStages(state);
+    return "stage closed";
   }
 
   return NULL;
