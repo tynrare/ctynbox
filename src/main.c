@@ -36,8 +36,8 @@ int main() {
   SetConfigFlags(FLAG_MSAA_4X_HINT); // Set MSAA 4X hint before windows
     //  creation
   //SetConfigFlags(FLAG_WINDOW_HIGHDPI);
-   InitWindow(viewport_w, viewport_h, "ctynbox");
-  SetWindowState(FLAG_WINDOW_RESIZABLE);
+  InitWindow(viewport_w, viewport_h, "ctynbox");
+  //SetWindowState(FLAG_WINDOW_RESIZABLE);
   SetTargetFPS(60);
 
   state = AppInit(&stage);
