@@ -60,11 +60,12 @@ int main() {
   viewport_w = LoadProgress("viewport_w");
   viewport_h = LoadProgress("viewport_h");
   dpr = LoadProgress("device_pixel_ratio");
-#else
+#endif
+
+  InitWindow(viewport_w, viewport_h, "ctynbox");
+#ifndef PLATFORM_WEB
   SetWindowState(FLAG_WINDOW_RESIZABLE);
 #endif
-    //  creation
-  InitWindow(viewport_w, viewport_h, "ctynbox");
   SetTargetFPS(60);
 
   state = AppInit(&stage);

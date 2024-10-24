@@ -1,6 +1,7 @@
 #include "include/game_active.h"
 #include "include/tyncommons.h"
 #include "raymath.h"
+#include <math.h>
 #include <stdlib.h>
 #include "raylib.h"
 
@@ -368,8 +369,17 @@ static void DrawBots(G231012_GameState *state) {
 static void G231012Draw(G231012_GameState *state) {
   BeginMode2D(state->camera);
 
-  DrawTexturePro(state->assets.tilefloor.texture, (Rectangle){0, 0, 1024, 1024},
-                 (Rectangle){0, 0, 1024, 1024}, (Vector2){0, 0}, 0, WHITE);
+  const int tileposx = state->camera.target.x / 1024;
+  const int tileposy = state->camera.target.y / 1024;
+  for (int i = 0; i < 16; i++) {
+    const int x = (tileposx + i % 4 - 2) * 1024;
+    const int y = (tileposy + floorf((float)i / 4) - 2) * 1024;
+      DrawTexturePro(state->assets.tilefloor.texture,
+                     (Rectangle){0, 0, 1024, 1024},
+                     (Rectangle){x, y, 1024, 1024},
+                     (Vector2){0, 0}, 0, WHITE);
+  }
+
   DrawText("TAB to open console.\n? to display commands", 16, 200, 20,
            LIGHTGRAY);
   DrawFPS(16, 240);
