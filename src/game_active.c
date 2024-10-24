@@ -106,7 +106,7 @@ G231012_GameState *G231012_Init(TynStage *stage) {
   state->camera.rotation = 0;
   const int dpr = LoadProgress("device_pixel_ratio");
   TraceLog(LOG_INFO, TextFormat("device_pixel_ratio is %d", dpr));
-  state->camera.zoom = 1.0f / dpr;
+  state->camera.zoom = 1.0f;
 
 
 
@@ -315,7 +315,8 @@ static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
   }
 
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-    state->pawn.targetPosition = Vector2Add(Vector2Subtract(state->camera.target, state->camera.offset), mousepos);
+
+    state->pawn.targetPosition = GetScreenToWorld2D(mousepos, state->camera);
   }
 
   float closest_dist = Vector2Distance(mousepos, state->pawn.position);
