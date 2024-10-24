@@ -2,7 +2,6 @@
 #include "include/tyncommons.h"
 #include "raymath.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include "raylib.h"
 
 
@@ -11,23 +10,6 @@
 #include <emscripten/emscripten.h>
 #endif
 
-void SaveProgress(const char *key, const int value) {
-#if defined(PLATFORM_WEB)
-  char script[256];
-  snprintf(script, sizeof(script), "saveProgress('%s', '%d');", key, value);
-  emscripten_run_script(script);
-#endif
-}
-
-const int LoadProgress(const char *key) {
-#if defined(PLATFORM_WEB)
-  char script[256];
-  snprintf(script, sizeof(script), "loadProgress('%s');", key);
-  return emscripten_run_script_int(script);
-#else
-  return 1;
-#endif
-}
 // tmp }
 
 #define DEBUG 0
@@ -104,8 +86,7 @@ G231012_GameState *G231012_Init(TynStage *stage) {
   state->camera.offset = (Vector2){ hsw, hsh };
   state->camera.target = (Vector2){ 256, 256 };
   state->camera.rotation = 0;
-  const int dpr = LoadProgress("device_pixel_ratio");
-  TraceLog(LOG_INFO, TextFormat("device_pixel_ratio is %d", dpr));
+
   state->camera.zoom = 1.0f;
 
 

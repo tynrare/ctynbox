@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "include/app.h"
+#include <stdio.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -8,6 +9,25 @@
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
+
+
+void SaveProgress(const char *key, const int value) {
+#if defined(PLATFORM_WEB)
+  char script[256];
+  snprintf(script, sizeof(script), "saveProgress('%s', '%d');", key, value);
+  emscripten_run_script(script);
+#endif
+}
+
+const int LoadProgress(const char *key) {
+#if defined(PLATFORM_WEB)
+  char script[256];
+  snprintf(script, sizeof(script), "loadProgress('%s');", key);
+  return emscripten_run_script_int(script);
+#else
+  return 0;
+#endif
+}
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
@@ -25,6 +45,8 @@ static void step();
 static void loop();
 bool active = false;
 
+int dpr = 1;
+
 //----------------------------------------------------------------------------------
 // Main Enry Point
 //----------------------------------------------------------------------------------
@@ -34,9 +56,15 @@ int main() {
   //--------------------------------------------------------------------------------------
 
   SetConfigFlags(FLAG_WINDOW_HIGHDPI & FLAG_MSAA_4X_HINT); // Set MSAA 4X hint before windows
+#if defined(PLATFORM_WEB)
+  viewport_w = LoadProgress("viewport_w");
+  viewport_h = LoadProgress("viewport_h");
+  dpr = LoadProgress("device_pixel_ratio");
+#else
+  SetWindowState(FLAG_WINDOW_RESIZABLE);
+#endif
     //  creation
   InitWindow(viewport_w, viewport_h, "ctynbox");
-  //SetWindowState(FLAG_WINDOW_RESIZABLE);
   SetTargetFPS(60);
 
   state = AppInit(&stage);
@@ -45,6 +73,9 @@ int main() {
   state = AppInit(&stage);
   active = true;
   // DisableCursor();
+
+  SetMouseScale(dpr, dpr);
+  TraceLog(LOG_INFO, TextFormat("device_pixel_ratio is %d, viewport_w is %d, viewport_h is %d", dpr, viewport_w, viewport_h));
 
   loop();
 
@@ -73,8 +104,14 @@ static long resize_timestamp = -1;
 static const float resize_threshold = 0.3;
 static Vector2 requested_viewport = {VIEWPORT_W, VIEWPORT_H};
 static void equilizer() {
+#if defined(PLATFORM_WEB)
+  const int vw = LoadProgress("viewport_w");
+  const int vh = LoadProgress("viewport_h");
+#else
   const int vw = GetScreenWidth();
   const int vh = GetScreenHeight();
+#endif
+
 
   const long now = GetTime();
 
@@ -97,12 +134,14 @@ static void equilizer() {
     resize_timestamp = now;
     viewport_w = vw;
     viewport_h = vh;
+    SetWindowSize(viewport_w, viewport_h);
     // init();
   }
 }   
 
 void step(void)
 {
+    equilizer();
     STAGEFLAG flags = stage.frame.step(state, stage.flags);
 
     if (flags & STAGEFLAG_DISABLED || !active) {

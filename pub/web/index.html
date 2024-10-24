@@ -13,7 +13,7 @@
     <meta name="x5-fullscreen" content="true"/>
     <meta name="360-fullscreen" content="true"/>
 
-    <title>tynmaze-auto</title>
+    <title>ctynbox</title>
     <style>
 			html, body {
 				width: 100%;
@@ -41,6 +41,10 @@
 				display: none;
 			}
 
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
       .spinner {
         height: 50px;
         width: 50px;
@@ -109,9 +113,20 @@
           const n = Number(localStorage.getItem(key) ?? 0);
           return isNaN(n) ? 0 : n;
       }
+
     </script>
     <script type='text/javascript'>
-      saveProgress("device_pixel_ratio", window.devicePixelRatio);
+      const dpr = window.devicePixelRatio;
+      saveProgress("device_pixel_ratio", dpr);
+
+      const upd = () => {
+        const w = document.body.clientWidth * dpr;
+        const h = document.body.clientHeight * dpr;
+        saveProgress("viewport_w", w);
+        saveProgress("viewport_h", h);
+        requestAnimationFrame(upd);
+      }
+      upd();
     </script>
     <script>
     </script>
@@ -160,13 +175,7 @@
         })(),
         canvas: (function() {
           var canvas = document.getElementById('canvas');
-          const upd = () => {
-          const devicePixelRatio = window.devicePixelRatio || 1;
-          canvas.width = canvas.clientWidth * devicePixelRatio;
-          canvas.height = canvas.clientHeight * devicePixelRatio;
-          requestAnimationFrame(upd);
-          }
-          upd();
+
           // As a default initial behavior, pop up an alert when webgl context is lost. To make your
           // application robust, you may want to override this behavior before shipping!
           // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2

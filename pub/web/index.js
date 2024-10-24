@@ -16,7 +16,7 @@ var Module = typeof Module != 'undefined' ? Module : {};
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmp36sjb8xy.js
+// include: /tmp/tmpf0nspo1w.js
 
   if (!Module.expectedDataFileDownloads) {
     Module.expectedDataFileDownloads = 0;
@@ -198,7 +198,7 @@ Module['FS_createPath']("/res", "tynmaze", true, true);
 
   })();
 
-// end include: /tmp/tmp36sjb8xy.js
+// end include: /tmp/tmpf0nspo1w.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -836,40 +836,40 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  25288: () => { if (document.fullscreenElement) return 1; },  
- 25334: () => { return document.getElementById('canvas').width; },  
- 25386: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 25454: () => { document.exitFullscreen(); },  
- 25481: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
- 25554: () => { if (document.fullscreenElement) return 1; },  
- 25600: () => { return document.getElementById('canvas').width; },  
- 25652: () => { return screen.width; },  
- 25677: () => { document.exitFullscreen(); },  
- 25704: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
- 25837: () => { if (document.fullscreenElement) return 1; },  
- 25883: () => { return document.getElementById('canvas').width; },  
- 25935: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 26003: () => { if (document.fullscreenElement) return 1; },  
- 26049: () => { return document.getElementById('canvas').width; },  
- 26101: () => { return screen.width; },  
- 26126: () => { if (document.fullscreenElement) return 1; },  
- 26172: () => { return document.getElementById('canvas').width; },  
- 26224: () => { return screen.width; },  
- 26249: () => { document.exitFullscreen(); },  
- 26276: () => { if (document.fullscreenElement) return 1; },  
- 26322: () => { return document.getElementById('canvas').width; },  
- 26374: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 26442: () => { document.exitFullscreen(); },  
- 26469: () => { return screen.width; },  
- 26494: () => { return screen.height; },  
- 26520: () => { return window.screenX; },  
- 26547: () => { return window.screenY; },  
- 26574: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
- 26627: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
- 26698: () => { document.getElementById('canvas').style.cursor = 'none'; },  
- 26755: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
- 26826: () => { if (document.fullscreenElement) return 1; },  
- 26872: () => { if (document.pointerLockElement) return 1; }
+  25368: () => { if (document.fullscreenElement) return 1; },  
+ 25414: () => { return document.getElementById('canvas').width; },  
+ 25466: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 25534: () => { document.exitFullscreen(); },  
+ 25561: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
+ 25634: () => { if (document.fullscreenElement) return 1; },  
+ 25680: () => { return document.getElementById('canvas').width; },  
+ 25732: () => { return screen.width; },  
+ 25757: () => { document.exitFullscreen(); },  
+ 25784: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
+ 25917: () => { if (document.fullscreenElement) return 1; },  
+ 25963: () => { return document.getElementById('canvas').width; },  
+ 26015: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 26083: () => { if (document.fullscreenElement) return 1; },  
+ 26129: () => { return document.getElementById('canvas').width; },  
+ 26181: () => { return screen.width; },  
+ 26206: () => { if (document.fullscreenElement) return 1; },  
+ 26252: () => { return document.getElementById('canvas').width; },  
+ 26304: () => { return screen.width; },  
+ 26329: () => { document.exitFullscreen(); },  
+ 26356: () => { if (document.fullscreenElement) return 1; },  
+ 26402: () => { return document.getElementById('canvas').width; },  
+ 26454: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 26522: () => { document.exitFullscreen(); },  
+ 26549: () => { return screen.width; },  
+ 26574: () => { return screen.height; },  
+ 26600: () => { return window.screenX; },  
+ 26627: () => { return window.screenY; },  
+ 26654: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
+ 26707: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
+ 26778: () => { document.getElementById('canvas').style.cursor = 'none'; },  
+ 26835: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
+ 26906: () => { if (document.fullscreenElement) return 1; },  
+ 26952: () => { if (document.pointerLockElement) return 1; }
 };
 function GetWindowInnerWidth() { return window.innerWidth; }
 function GetWindowInnerHeight() { return window.innerHeight; }
@@ -8717,6 +8717,8 @@ function GetWindowInnerHeight() { return window.innerHeight; }
       win.shouldClose = value;
     };
 
+  var _glfwSetWindowSize = (winid, width, height) => GLFW.setWindowSize(winid, width, height);
+
   var _glfwSetWindowSizeCallback = (winid, cbfun) => GLFW.setWindowSizeCallback(winid, cbfun);
 
   var _glfwSwapBuffers = (winid) => GLFW.swapBuffers(winid);
@@ -9627,6 +9629,8 @@ var wasmImports = {
   /** @export */
   glfwSetWindowShouldClose: _glfwSetWindowShouldClose,
   /** @export */
+  glfwSetWindowSize: _glfwSetWindowSize,
+  /** @export */
   glfwSetWindowSizeCallback: _glfwSetWindowSizeCallback,
   /** @export */
   glfwSwapBuffers: _glfwSwapBuffers,
@@ -9673,8 +9677,8 @@ var _asyncify_start_unwind = (a0) => (_asyncify_start_unwind = wasmExports['asyn
 var _asyncify_stop_unwind = () => (_asyncify_stop_unwind = wasmExports['asyncify_stop_unwind'])();
 var _asyncify_start_rewind = (a0) => (_asyncify_start_rewind = wasmExports['asyncify_start_rewind'])(a0);
 var _asyncify_stop_rewind = () => (_asyncify_stop_rewind = wasmExports['asyncify_stop_rewind'])();
-var ___start_em_js = Module['___start_em_js'] = 26919;
-var ___stop_em_js = Module['___stop_em_js'] = 26992;
+var ___start_em_js = Module['___start_em_js'] = 26999;
+var ___stop_em_js = Module['___stop_em_js'] = 27072;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
