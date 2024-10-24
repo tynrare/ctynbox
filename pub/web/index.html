@@ -110,6 +110,10 @@
           return isNaN(n) ? 0 : n;
       }
     </script>
+    <script type='text/javascript'>
+      saveProgress("device_pixel_ratio", window.devicePixelRatio);
+      console.log("ddd", window.devicePixelRatio)
+    </script>
     <script>
     window.onmessage = (e) => {
         const payload = JSON.parse(e.data);

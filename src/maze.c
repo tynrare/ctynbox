@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 void TynmazeDispose(TynmazeState *state);
 STAGEFLAG TynmazeStep(TynmazeState *state, STAGEFLAG flags);
 void TynmazeDraw(TynmazeState *state);

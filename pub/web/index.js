@@ -16,7 +16,7 @@ var Module = typeof Module != 'undefined' ? Module : {};
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmprovr6xes.js
+// include: /tmp/tmpgz5jxax9.js
 
   if (!Module.expectedDataFileDownloads) {
     Module.expectedDataFileDownloads = 0;
@@ -198,7 +198,7 @@ Module['FS_createPath']("/res", "tynmaze", true, true);
 
   })();
 
-// end include: /tmp/tmprovr6xes.js
+// end include: /tmp/tmpgz5jxax9.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -836,40 +836,40 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  26152: () => { if (document.fullscreenElement) return 1; },  
- 26198: () => { return document.getElementById('canvas').width; },  
- 26250: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 26318: () => { document.exitFullscreen(); },  
- 26345: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
- 26418: () => { if (document.fullscreenElement) return 1; },  
- 26464: () => { return document.getElementById('canvas').width; },  
- 26516: () => { return screen.width; },  
- 26541: () => { document.exitFullscreen(); },  
- 26568: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
- 26701: () => { if (document.fullscreenElement) return 1; },  
- 26747: () => { return document.getElementById('canvas').width; },  
- 26799: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 26867: () => { if (document.fullscreenElement) return 1; },  
- 26913: () => { return document.getElementById('canvas').width; },  
- 26965: () => { return screen.width; },  
- 26990: () => { if (document.fullscreenElement) return 1; },  
- 27036: () => { return document.getElementById('canvas').width; },  
- 27088: () => { return screen.width; },  
- 27113: () => { document.exitFullscreen(); },  
- 27140: () => { if (document.fullscreenElement) return 1; },  
- 27186: () => { return document.getElementById('canvas').width; },  
- 27238: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 27306: () => { document.exitFullscreen(); },  
- 27333: () => { return screen.width; },  
- 27358: () => { return screen.height; },  
- 27384: () => { return window.screenX; },  
- 27411: () => { return window.screenY; },  
- 27438: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
- 27491: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
- 27562: () => { document.getElementById('canvas').style.cursor = 'none'; },  
- 27619: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
- 27690: () => { if (document.fullscreenElement) return 1; },  
- 27736: () => { if (document.pointerLockElement) return 1; }
+  26216: () => { if (document.fullscreenElement) return 1; },  
+ 26262: () => { return document.getElementById('canvas').width; },  
+ 26314: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 26382: () => { document.exitFullscreen(); },  
+ 26409: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
+ 26482: () => { if (document.fullscreenElement) return 1; },  
+ 26528: () => { return document.getElementById('canvas').width; },  
+ 26580: () => { return screen.width; },  
+ 26605: () => { document.exitFullscreen(); },  
+ 26632: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
+ 26765: () => { if (document.fullscreenElement) return 1; },  
+ 26811: () => { return document.getElementById('canvas').width; },  
+ 26863: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 26931: () => { if (document.fullscreenElement) return 1; },  
+ 26977: () => { return document.getElementById('canvas').width; },  
+ 27029: () => { return screen.width; },  
+ 27054: () => { if (document.fullscreenElement) return 1; },  
+ 27100: () => { return document.getElementById('canvas').width; },  
+ 27152: () => { return screen.width; },  
+ 27177: () => { document.exitFullscreen(); },  
+ 27204: () => { if (document.fullscreenElement) return 1; },  
+ 27250: () => { return document.getElementById('canvas').width; },  
+ 27302: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 27370: () => { document.exitFullscreen(); },  
+ 27397: () => { return screen.width; },  
+ 27422: () => { return screen.height; },  
+ 27448: () => { return window.screenX; },  
+ 27475: () => { return window.screenY; },  
+ 27502: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
+ 27555: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
+ 27626: () => { document.getElementById('canvas').style.cursor = 'none'; },  
+ 27683: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
+ 27754: () => { if (document.fullscreenElement) return 1; },  
+ 27800: () => { if (document.pointerLockElement) return 1; }
 };
 function GetWindowInnerWidth() { return window.innerWidth; }
 function GetWindowInnerHeight() { return window.innerHeight; }
@@ -6940,6 +6940,11 @@ function GetWindowInnerHeight() { return window.innerHeight; }
       abortOnCannotGrowMemory(requestedSize);
     };
 
+  /** @suppress{checkTypes} */
+  var _emscripten_run_script_int = (ptr) => {
+      return eval(UTF8ToString(ptr))|0;
+    };
+
   /** @suppress {checkTypes} */
   var _emscripten_sample_gamepad_data = () => {
       try {
@@ -9394,6 +9399,8 @@ var wasmImports = {
   /** @export */
   emscripten_resize_heap: _emscripten_resize_heap,
   /** @export */
+  emscripten_run_script_int: _emscripten_run_script_int,
+  /** @export */
   emscripten_sample_gamepad_data: _emscripten_sample_gamepad_data,
   /** @export */
   emscripten_set_canvas_element_size: _emscripten_set_canvas_element_size,
@@ -9670,8 +9677,8 @@ var _asyncify_start_unwind = (a0) => (_asyncify_start_unwind = wasmExports['asyn
 var _asyncify_stop_unwind = () => (_asyncify_stop_unwind = wasmExports['asyncify_stop_unwind'])();
 var _asyncify_start_rewind = (a0) => (_asyncify_start_rewind = wasmExports['asyncify_start_rewind'])(a0);
 var _asyncify_stop_rewind = () => (_asyncify_stop_rewind = wasmExports['asyncify_stop_rewind'])();
-var ___start_em_js = Module['___start_em_js'] = 27783;
-var ___stop_em_js = Module['___stop_em_js'] = 27856;
+var ___start_em_js = Module['___start_em_js'] = 27847;
+var ___stop_em_js = Module['___stop_em_js'] = 27920;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
