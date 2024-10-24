@@ -74,7 +74,7 @@ int main() {
   active = true;
   // DisableCursor();
 
-  SetMouseScale(dpr, dpr);
+  //SetMouseScale(dpr, dpr);
   TraceLog(LOG_INFO, TextFormat("device_pixel_ratio is %d, viewport_w is %d, viewport_h is %d", dpr, viewport_w, viewport_h));
 
   loop();
