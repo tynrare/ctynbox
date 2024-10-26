@@ -1,3 +1,5 @@
+![tilefloor](res/tilefloor.png)
+
 Demo at [ctynbox](https://ctynbox.netlify.app).
 Prev version on [guthub](https://github.com/tynrare/tynbox/tree/d240509).
 Prev version on [gitlab](https://gitlab.com/tynrare/dust-220624).
