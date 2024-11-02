@@ -1,10 +1,16 @@
 #include "include/game_active.h"
 #include "include/tyncommons.h"
+#include "raylib.h"
 #include "raymath.h"
 #include <math.h>
 #include <stdlib.h>
-#include "raylib.h"
+#include <string.h>
 
+static char *font_text = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрст"
+                         "уфхцчшщъыьэюя!\"#$%&'()*+,-./"
+                         "0123456789:;<=>?@ABCDEFGHI\nJKLMNOPQRSTUVWXYZ[]^_`"
+                         "abcdefghijklmn\nopqrstuvwxyz{|}~¿";
+static Font font = {0};
 
 // tmp {
 #if defined(PLATFORM_WEB)
@@ -43,16 +49,70 @@ static void G231012Dispose(G231012_GameState *state) {
   UnloadTexture(state->assets.playership.texture);
   UnloadTexture(state->assets.tilefloor.texture);
   UnloadTexture(state->assets.locationmark.texture);
-  UnloadTexture(state->assets.botship.texture);
+  for (int i = 0; i < 4; i++) {
+    UnloadTexture(state->assets.botships[i].texture);
+  }
   MemFree(state->bots);
+  UnloadFont(font);
+}
+
+// Remove codepoint duplicates if requested
+// WARNING: This process could be a bit slow if there text to process is very
+// long
+static int *CodepointRemoveDuplicates(int *codepoints, int codepointCount,
+                                      int *codepointsResultCount) {
+  int codepointsNoDupsCount = codepointCount;
+  int *codepointsNoDups = (int *)calloc(codepointCount, sizeof(int));
+  memcpy(codepointsNoDups, codepoints, codepointCount * sizeof(int));
+
+  // Remove duplicates
+  for (int i = 0; i < codepointsNoDupsCount; i++) {
+    for (int j = i + 1; j < codepointsNoDupsCount; j++) {
+      if (codepointsNoDups[i] == codepointsNoDups[j]) {
+        for (int k = j; k < codepointsNoDupsCount; k++)
+          codepointsNoDups[k] = codepointsNoDups[k + 1];
+
+        codepointsNoDupsCount--;
+        j--;
+      }
+    }
+  }
+
+  // NOTE: The size of codepointsNoDups is the same as original array but
+  // only required positions are filled (codepointsNoDupsCount)
+
+  *codepointsResultCount = codepointsNoDupsCount;
+  return codepointsNoDups;
 }
 
 G231012_GameAssets load() {
   G231012_GameAssets ga = {
-      SpriteLoad("res/crosshair.png"), SpriteLoad("res/playership.png"),
-      SpriteLoad("res/tilefloor.png"), SpriteLoad("res/locationmark.png"),
-      SpriteLoad("res/ship_C.png"),    SpriteLoad("res/ship_B.png"),
+      SpriteLoad("res/crosshair.png"),
+      SpriteLoad("res/playership.png"),
+      SpriteLoad("res/tilefloor.png"),
+      SpriteLoad("res/locationmark.png"),
+      {
+          SpriteLoad("res/ship_A.png"),
+          SpriteLoad("res/ship_C.png"),
+          SpriteLoad("res/ship_D.png"),
+          SpriteLoad("res/enemy_E.png"),
+      },
+      SpriteLoad("res/ship_B.png"),
   };
+
+  // Get codepoints from text
+  int codepointCount = 0;
+  int *codepoints = LoadCodepoints(font_text, &codepointCount);
+
+  // Removed duplicate codepoints to generate smaller font atlas
+  int codepointsNoDupsCount = 0;
+  int *codepointsNoDups = CodepointRemoveDuplicates(codepoints, codepointCount,
+                                                    &codepointsNoDupsCount);
+  UnloadCodepoints(codepoints);
+
+  font = LoadFontEx("res/monogram-extended.ttf", 32, codepointsNoDups,
+                    codepointsNoDupsCount);
+  SetTextLineSpacing(24);
 
   return ga;
 }
@@ -84,19 +144,17 @@ G231012_GameState *G231012_Init(TynStage *stage) {
 
   const int hsw = GetScreenWidth() / 2;
   const int hsh = GetScreenHeight() / 2;
-  state->camera.offset = (Vector2){ hsw, hsh };
-  state->camera.target = (Vector2){ 256, 256 };
+  state->camera.offset = (Vector2){hsw, hsh};
+  state->camera.target = (Vector2){256, 256};
   state->camera.rotation = 0;
 
   state->camera.zoom = 1.0f;
-
-
 
   state->bots =
       (G231012_PawnState *)MemAlloc(sizeof(G231012_PawnState) * BOTS_COUNT);
   state->bot_sprites = (Sprite *)MemAlloc(sizeof(Sprite) * BOTS_COUNT);
   state->bullets = (G231012_BulletState *)MemAlloc(sizeof(G231012_BulletState) *
-                                                 BULLETS_COUNT);
+                                                   BULLETS_COUNT);
   state->bullet_sprites = (Sprite *)MemAlloc(sizeof(Sprite) * BULLETS_COUNT);
 
   for (int i = 0; i < BOTS_COUNT; i++) {
@@ -105,7 +163,10 @@ G231012_GameState *G231012_Init(TynStage *stage) {
     bot->control_mode = PAWN_CONTROL_MODE_POINTER;
     bot->alive = false;
 
-    SpriteInit(sprite, state->assets.botship.texture);
+    const int r = GetRandomValue(0, 3);
+    Texture tex = state->assets.botships[r].texture;
+
+    SpriteInit(sprite, tex);
   }
 
   for (int i = 0; i < BULLETS_COUNT; i++) {
@@ -122,7 +183,6 @@ G231012_GameState *G231012_Init(TynStage *stage) {
 
   return stage->state;
 }
-
 
 static void StepPawn(G231012_PawnState *pawn, G231012_PawnConfig *config,
                      Sprite *sprite) {
@@ -278,10 +338,11 @@ static void StepBots(G231012_GameState *state) {
 }
 
 static void camera_step(G231012_GameState *state) {
-  state->camera.target = Vector2Lerp(state->camera.target, state->pawn.targetPosition, 0.01);
+  state->camera.target =
+      Vector2Lerp(state->camera.target, state->pawn.targetPosition, 0.01);
   const int hsw = GetScreenWidth() / 2;
   const int hsh = GetScreenHeight() / 2;
-  state->camera.offset = (Vector2){ hsw, hsh };
+  state->camera.offset = (Vector2){hsw, hsh};
 }
 
 static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
@@ -374,15 +435,18 @@ static void G231012Draw(G231012_GameState *state) {
   for (int i = 0; i < 16; i++) {
     const int x = (tileposx + i % 4 - 2) * 1024;
     const int y = (tileposy + floorf((float)i / 4) - 2) * 1024;
-      DrawTexturePro(state->assets.tilefloor.texture,
-                     (Rectangle){0, 0, 1024, 1024},
-                     (Rectangle){x, y, 1024, 1024},
-                     (Vector2){0, 0}, 0, WHITE);
+    DrawTexturePro(state->assets.tilefloor.texture,
+                   (Rectangle){0, 0, 1024, 1024}, (Rectangle){x, y, 1024, 1024},
+                   (Vector2){0, 0}, 0, WHITE);
   }
 
   DrawText("TAB to open console.\n? to display commands", 16, 200, 20,
            LIGHTGRAY);
   DrawFPS(16, 240);
+  DrawTextEx(font,
+             "Орнитоптер: летательный аппарат, способный зависать на месте. "
+             "\nИмеет крылья, подобные птичьим",
+             (Vector2){16, 280}, font.baseSize, 2, WHITE);
 
   SpriteDraw(&state->assets.playership);
   SpriteDraw(&state->assets.locationmark);
@@ -392,7 +456,6 @@ static void G231012Draw(G231012_GameState *state) {
   EndMode2D();
 
   SpriteDraw(&state->assets.crosshair);
-
 
 #if DEBUG
   DrawLine(state->pawn.position.x, state->pawn.position.y,
@@ -457,4 +520,3 @@ static void PawnWASDControls(struct G231012_PawnState *state,
 }
 
 // ---
-

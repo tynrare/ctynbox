@@ -16,7 +16,7 @@ var Module = typeof Module != 'undefined' ? Module : {};
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmpp__wg9sj.js
+// include: /tmp/tmpt5fsqvk6.js
 
   if (!Module.expectedDataFileDownloads) {
     Module.expectedDataFileDownloads = 0;
@@ -194,11 +194,11 @@ Module['FS_createPath']("/res", "tynmaze", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/res/crosshair.png", "start": 0, "end": 133}, {"filename": "/res/locationmark.png", "start": 133, "end": 8275}, {"filename": "/res/playership.png", "start": 8275, "end": 9374}, {"filename": "/res/shaders/deferred_shading.fs", "start": 9374, "end": 10971}, {"filename": "/res/shaders/deferred_shading.vs", "start": 10971, "end": 11195}, {"filename": "/res/shaders/fog.fs", "start": 11195, "end": 13675}, {"filename": "/res/shaders/gbuffer.fs", "start": 13675, "end": 14403}, {"filename": "/res/shaders/gbuffer.vs", "start": 14403, "end": 15005}, {"filename": "/res/shaders/grayscale.fs", "start": 15005, "end": 15645}, {"filename": "/res/shaders/lighting.fs", "start": 15645, "end": 17660}, {"filename": "/res/shaders/lighting.vs", "start": 17660, "end": 18409}, {"filename": "/res/shaders/sobel-100.fs", "start": 18409, "end": 20053}, {"filename": "/res/shaders/sobel-330.fs", "start": 20053, "end": 21710}, {"filename": "/res/shaders/tynroar-sdf-100.fs", "start": 21710, "end": 25674}, {"filename": "/res/shaders/tynroar-sdf-330.fs", "start": 25674, "end": 29653}, {"filename": "/res/ship_A.png", "start": 29653, "end": 30158}, {"filename": "/res/ship_B.png", "start": 30158, "end": 30737}, {"filename": "/res/ship_C.png", "start": 30737, "end": 31352}, {"filename": "/res/test/d231117.mtl", "start": 31352, "end": 31615}, {"filename": "/res/test/d231117.obj", "start": 31615, "end": 143844}, {"filename": "/res/test/d240326.mtl", "start": 143844, "end": 144099}, {"filename": "/res/test/d240326.obj", "start": 144099, "end": 152717}, {"filename": "/res/test/palette_0.png", "start": 152717, "end": 153260}, {"filename": "/res/test/palette_1.png", "start": 153260, "end": 157593}, {"filename": "/res/tilefloor-0.png", "start": 157593, "end": 320254}, {"filename": "/res/tilefloor.png", "start": 320254, "end": 334805}, {"filename": "/res/tynmaze/cubicmap_atlas-d241022.png", "start": 334805, "end": 373693}, {"filename": "/res/tynmaze/cubicmap_atlas.png", "start": 373693, "end": 635684}, {"filename": "/res/tynmaze/flag_triangle.png", "start": 635684, "end": 636557}, {"filename": "/res/tynmaze/maze-0.png", "start": 636557, "end": 644638}], "remote_package_size": 644638});
+    loadPackage({"files": [{"filename": "/res/crosshair.png", "start": 0, "end": 133}, {"filename": "/res/locationmark.png", "start": 133, "end": 8275}, {"filename": "/res/monogram-extended.ttf", "start": 8275, "end": 67011}, {"filename": "/res/monogram.ttf", "start": 67011, "end": 77479}, {"filename": "/res/playership.png", "start": 77479, "end": 78578}, {"filename": "/res/shaders/deferred_shading.fs", "start": 78578, "end": 80175}, {"filename": "/res/shaders/deferred_shading.vs", "start": 80175, "end": 80399}, {"filename": "/res/shaders/fog.fs", "start": 80399, "end": 82879}, {"filename": "/res/shaders/gbuffer.fs", "start": 82879, "end": 83607}, {"filename": "/res/shaders/gbuffer.vs", "start": 83607, "end": 84209}, {"filename": "/res/shaders/grayscale.fs", "start": 84209, "end": 84849}, {"filename": "/res/shaders/lighting.fs", "start": 84849, "end": 86864}, {"filename": "/res/shaders/lighting.vs", "start": 86864, "end": 87613}, {"filename": "/res/shaders/sobel-100.fs", "start": 87613, "end": 89257}, {"filename": "/res/shaders/sobel-330.fs", "start": 89257, "end": 90914}, {"filename": "/res/shaders/tynroar-sdf-100.fs", "start": 90914, "end": 94878}, {"filename": "/res/shaders/tynroar-sdf-330.fs", "start": 94878, "end": 98857}, {"filename": "/res/ship_A.png", "start": 98857, "end": 99362}, {"filename": "/res/ship_B.png", "start": 99362, "end": 99941}, {"filename": "/res/ship_C.png", "start": 99941, "end": 100556}, {"filename": "/res/test/d231117.mtl", "start": 100556, "end": 100819}, {"filename": "/res/test/d231117.obj", "start": 100819, "end": 213048}, {"filename": "/res/test/d240326.mtl", "start": 213048, "end": 213303}, {"filename": "/res/test/d240326.obj", "start": 213303, "end": 221921}, {"filename": "/res/test/palette_0.png", "start": 221921, "end": 222464}, {"filename": "/res/test/palette_1.png", "start": 222464, "end": 226797}, {"filename": "/res/tilefloor-0.png", "start": 226797, "end": 389458}, {"filename": "/res/tilefloor.png", "start": 389458, "end": 404009}, {"filename": "/res/tynmaze/cubicmap_atlas-d241022.png", "start": 404009, "end": 442897}, {"filename": "/res/tynmaze/cubicmap_atlas.png", "start": 442897, "end": 704888}, {"filename": "/res/tynmaze/flag_triangle.png", "start": 704888, "end": 705761}, {"filename": "/res/tynmaze/maze-0.png", "start": 705761, "end": 713842}], "remote_package_size": 713842});
 
   })();
 
-// end include: /tmp/tmpp__wg9sj.js
+// end include: /tmp/tmpt5fsqvk6.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -836,40 +836,40 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  25368: () => { if (document.fullscreenElement) return 1; },  
- 25414: () => { return document.getElementById('canvas').width; },  
- 25466: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 25534: () => { document.exitFullscreen(); },  
- 25561: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
- 25634: () => { if (document.fullscreenElement) return 1; },  
- 25680: () => { return document.getElementById('canvas').width; },  
- 25732: () => { return screen.width; },  
- 25757: () => { document.exitFullscreen(); },  
- 25784: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
- 25917: () => { if (document.fullscreenElement) return 1; },  
- 25963: () => { return document.getElementById('canvas').width; },  
- 26015: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 26083: () => { if (document.fullscreenElement) return 1; },  
- 26129: () => { return document.getElementById('canvas').width; },  
- 26181: () => { return screen.width; },  
- 26206: () => { if (document.fullscreenElement) return 1; },  
- 26252: () => { return document.getElementById('canvas').width; },  
- 26304: () => { return screen.width; },  
- 26329: () => { document.exitFullscreen(); },  
- 26356: () => { if (document.fullscreenElement) return 1; },  
- 26402: () => { return document.getElementById('canvas').width; },  
- 26454: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 26522: () => { document.exitFullscreen(); },  
- 26549: () => { return screen.width; },  
- 26574: () => { return screen.height; },  
- 26600: () => { return window.screenX; },  
- 26627: () => { return window.screenY; },  
- 26654: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
- 26707: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
- 26778: () => { document.getElementById('canvas').style.cursor = 'none'; },  
- 26835: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
- 26906: () => { if (document.fullscreenElement) return 1; },  
- 26952: () => { if (document.pointerLockElement) return 1; }
+  34776: () => { if (document.fullscreenElement) return 1; },  
+ 34822: () => { return document.getElementById('canvas').width; },  
+ 34874: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 34942: () => { document.exitFullscreen(); },  
+ 34969: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
+ 35042: () => { if (document.fullscreenElement) return 1; },  
+ 35088: () => { return document.getElementById('canvas').width; },  
+ 35140: () => { return screen.width; },  
+ 35165: () => { document.exitFullscreen(); },  
+ 35192: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
+ 35325: () => { if (document.fullscreenElement) return 1; },  
+ 35371: () => { return document.getElementById('canvas').width; },  
+ 35423: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 35491: () => { if (document.fullscreenElement) return 1; },  
+ 35537: () => { return document.getElementById('canvas').width; },  
+ 35589: () => { return screen.width; },  
+ 35614: () => { if (document.fullscreenElement) return 1; },  
+ 35660: () => { return document.getElementById('canvas').width; },  
+ 35712: () => { return screen.width; },  
+ 35737: () => { document.exitFullscreen(); },  
+ 35764: () => { if (document.fullscreenElement) return 1; },  
+ 35810: () => { return document.getElementById('canvas').width; },  
+ 35862: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 35930: () => { document.exitFullscreen(); },  
+ 35957: () => { return screen.width; },  
+ 35982: () => { return screen.height; },  
+ 36008: () => { return window.screenX; },  
+ 36035: () => { return window.screenY; },  
+ 36062: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
+ 36115: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
+ 36186: () => { document.getElementById('canvas').style.cursor = 'none'; },  
+ 36243: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
+ 36314: () => { if (document.fullscreenElement) return 1; },  
+ 36360: () => { if (document.pointerLockElement) return 1; }
 };
 function GetWindowInnerWidth() { return window.innerWidth; }
 function GetWindowInnerHeight() { return window.innerHeight; }
@@ -9677,8 +9677,8 @@ var _asyncify_start_unwind = (a0) => (_asyncify_start_unwind = wasmExports['asyn
 var _asyncify_stop_unwind = () => (_asyncify_stop_unwind = wasmExports['asyncify_stop_unwind'])();
 var _asyncify_start_rewind = (a0) => (_asyncify_start_rewind = wasmExports['asyncify_start_rewind'])(a0);
 var _asyncify_stop_rewind = () => (_asyncify_stop_rewind = wasmExports['asyncify_stop_rewind'])();
-var ___start_em_js = Module['___start_em_js'] = 26999;
-var ___stop_em_js = Module['___stop_em_js'] = 27072;
+var ___start_em_js = Module['___start_em_js'] = 36407;
+var ___stop_em_js = Module['___stop_em_js'] = 36480;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===

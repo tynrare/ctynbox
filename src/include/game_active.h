@@ -50,7 +50,7 @@ typedef struct G231012_GameAssets {
 	Sprite playership;
 	Sprite tilefloor;
 	Sprite locationmark;
-	Sprite botship;
+	Sprite botships[4];
 	Sprite bullet;
 } G231012_GameAssets;
 
