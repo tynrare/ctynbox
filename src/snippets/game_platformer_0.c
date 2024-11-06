@@ -1,4 +1,4 @@
-#include "include/game_platformer_0.h"
+#include "../include/game_platformer_0.h"
 #include <raymath.h>
 #include <stddef.h>
 #include <stdlib.h>

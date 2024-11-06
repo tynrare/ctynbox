@@ -1,4 +1,4 @@
-#include "include/draft0.h"
+#include "../include/draft0.h"
 #include <math.h>
 #include <raylib.h>
 

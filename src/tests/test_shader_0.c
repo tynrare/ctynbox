@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include "include/test_shader_0.h"
-#include "include/shader_sdf2d.h"
+#include "../include/test_shader_0.h"
+#include "../include/shader_sdf2d.h"
 #include "rlgl.h"
 
 #include <math.h>

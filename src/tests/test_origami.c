@@ -1,4 +1,4 @@
-#include "./include/tests.h"
+#include "../include/tests.h"
 #include "raylib.h"
 #include "rlgl.h"
 #include "math.h"

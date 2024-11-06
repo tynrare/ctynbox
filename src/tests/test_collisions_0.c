@@ -1,5 +1,5 @@
-#include "include/test_collisions_0.h"
-#include "include/collisions.h"
+#include "../include/test_collisions_0.h"
+#include "../include/collisions.h"
 #include <stdlib.h>
 
 static void _dispose(TestCollisions0State* state);

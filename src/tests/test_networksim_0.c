@@ -1,4 +1,4 @@
-#include "include/test_networksim_0.h"
+#include "../include/test_networksim_0.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <raymath.h>

@@ -1,6 +1,6 @@
-#include "./include/tests.h"
+#include "../include/tests.h"
 #include "math.h"
-#include "./include/tyncommons.h"
+#include "../include/tyncommons.h"
 
 typedef struct LerpTestEntity {
   float threshold;

@@ -1,8 +1,8 @@
 #include <string.h>
 #include <raylib.h>
 
-#include "include/tynroar_rcmd.h"
-#include "include/app.h"
+#include "../include/tynroar_rcmd.h"
+#include "../include/app.h"
 #include <stdlib.h>
 
 STAGEFLAG Console_UpdateLogicFrame(ConsoleState *state, STAGEFLAG flags) {

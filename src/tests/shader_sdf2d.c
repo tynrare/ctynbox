@@ -1,4 +1,4 @@
-#include "include/shader_sdf2d.h"
+#include "../include/shader_sdf2d.h"
 #include <math.h>
 
 #if defined(PLATFORM_WEB)

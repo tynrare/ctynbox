@@ -1,5 +1,5 @@
-#include "include/game_tynmaze.h"
-#include "include/tyncommons.h"
+#include "../include/game_tynmaze.h"
+#include "../include/tyncommons.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

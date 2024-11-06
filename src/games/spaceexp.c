@@ -1,5 +1,5 @@
-#include "include/game_active.h"
-#include "include/tyncommons.h"
+#include "../include/spaceexp.h"
+#include "../include/tyncommons.h"
 #include "raylib.h"
 #include "raymath.h"
 #include <math.h>
