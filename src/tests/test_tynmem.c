@@ -42,7 +42,11 @@ static void _init(TestTynmemState *state) {
   _add_blocks(state);
 }
 
-static void _dispose(TestTynmemState *state) {}
+static void _dispose(TestTynmemState *state) {
+	MempoolDispose(&state->mempool);
+	MemblockDispose(&state->memblock);
+}
+
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
   if (IsKeyPressed(KEY_SPACE)) {
     int p = GetRandomValue(0, state->memblock.count);
@@ -83,7 +87,7 @@ static void _draw(TestTynmemState *state) {
     for (int i = 0; i < MEMPOOL_SIZE; i++) {
       Memcell *m = &memcell->point[i];
       DrawRectangle((index * MEMPOOL_SIZE + i) * 16, 70, 16, 16,
-                    m->allocated == true ? GREEN : GRAY);
+                    m->point ? GREEN : GRAY);
     }
     index += 1;
   }

@@ -12,6 +12,14 @@ Memblock *MemblockInit(Memblock *memblock) {
   return memblock;
 }
 
+void MemblockDispose(Memblock *memblock) {
+  for (Memcell *m = memblock->first; m; m = m->next) {
+		if (m->point) {
+			free(m->point);
+		}
+		free(m);
+	}
+}
 
 Mempool *MempoolInit(Mempool *mempool) {
   mempool->mem = malloc(sizeof(Memblock));
@@ -20,6 +28,11 @@ Mempool *MempoolInit(Mempool *mempool) {
 	MemblockInit(mempool->pool);
 
   return MempoolExtend(mempool);
+}
+
+void MempoolDispose(Mempool *mempool) {
+	MemblockDispose(mempool->mem);
+	MemblockDispose(mempool->pool);
 }
 
 #ifdef POOL_WORKS
@@ -84,7 +97,6 @@ Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link) {
 	Memcell *memcell = malloc(sizeof(Memcell));
 
   memcell->point = link;
-	memcell->allocated = true;
 
   return MemcellAdd(memblock, memcell);
 }
@@ -101,10 +113,7 @@ Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
     memcell->next->prev = memcell->prev;
   }
 
-  memcell->prev = 0;
-  memcell->next = 0;
-	memcell->allocated = false;
-  memblock->count -= 1;
+	free(memcell);
 
   return memcell;
 }
