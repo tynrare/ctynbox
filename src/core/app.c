@@ -1,5 +1,5 @@
 #include "../include/app.h"
-#include "../include/spaceexp.h"
+#include "../include/game_spaceexp.h"
 #include "../include/draft0.h"
 #include "../include/editor0.h"
 #include "../include/game_tynmaze.h"
@@ -9,6 +9,8 @@
 //#include "../include/test_physics_0.h"
 #include "../include/test_collisions_0.h"
 #include "../include/game_platformer_0.h"
+#include "../include/test_tynmem.h"
+
 #include "../include/tyncommons.h"
 #include <raylib.h>
 #include <stdlib.h>
@@ -28,7 +30,8 @@ AppState *AppInit(TynStage *stage) {
   stage->frame = (TynFrame){&AppDispose, &AppStep, &AppDraw};
 
   AppNewStage(state, Console_Init);
-  AppNewStage(state, G231012_Init);
+  //AppNewStage(state, GSpaceexp_Init);
+  AppNewStage(state, TestTynmemInit);
   //AppNewStage(state, draft0_init);
   //AppNewStage(state, editor0_init);
   //AppNewStage(state, GamePlatformer0Init);
@@ -104,7 +107,7 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
     return "first actual demo here";
   } else if (strcmp(command, "cd game0") == 0) {
     AppCleanupStages(state);
-    AppNewStage(state, G231012_Init);
+    AppNewStage(state, GSpaceexp_Init);
     return "first actual demo here";
   } else if (strcmp(command, "?maze") == 0) {
     return "\nmaze commands (in [cd maze] mode):\n"

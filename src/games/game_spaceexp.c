@@ -1,4 +1,4 @@
-#include "../include/spaceexp.h"
+#include "../include/game_spaceexp.h"
 #include "../include/tyncommons.h"
 #include "raylib.h"
 #include "raymath.h"
@@ -36,15 +36,15 @@ float AngleDifference(float angle1, float angle2) {
   return diff < -180 ? diff + 360 : diff;
 }
 
-static void PawnWASDControls(struct G231012_PawnState *state,
-                             struct G231012_PawnConfig *config);
-static void PawnPointerControls(struct G231012_PawnState *state,
-                                struct G231012_PawnConfig *config);
-static void G231012Draw(G231012_GameState *state);
-static STAGEFLAG G231012Step(G231012_GameState *state, int flags);
+static void PawnWASDControls(struct GSpaceexp_PawnState *state,
+                             struct GSpaceexp_PawnConfig *config);
+static void PawnPointerControls(struct GSpaceexp_PawnState *state,
+                                struct GSpaceexp_PawnConfig *config);
+static void GSpaceexpDraw(GSpaceexp_GameState *state);
+static STAGEFLAG GSpaceexpStep(GSpaceexp_GameState *state, int flags);
 
-static void G231012Dispose(G231012_GameState *state);
-static void G231012Dispose(G231012_GameState *state) {
+static void GSpaceexpDispose(GSpaceexp_GameState *state);
+static void GSpaceexpDispose(GSpaceexp_GameState *state) {
   UnloadTexture(state->assets.crosshair.texture);
   UnloadTexture(state->assets.playership.texture);
   UnloadTexture(state->assets.tilefloor.texture);
@@ -85,8 +85,8 @@ static int *CodepointRemoveDuplicates(int *codepoints, int codepointCount,
   return codepointsNoDups;
 }
 
-G231012_GameAssets load() {
-  G231012_GameAssets ga = {
+GSpaceexp_GameAssets load() {
+  GSpaceexp_GameAssets ga = {
       SpriteLoad("res/crosshair.png"),
       SpriteLoad("res/playership.png"),
       SpriteLoad("res/tilefloor.png"),
@@ -120,8 +120,8 @@ G231012_GameAssets load() {
 const short unsigned int BOTS_COUNT = 16;
 const short unsigned int BULLETS_COUNT = 100;
 
-G231012_GameState *G231012_Init(TynStage *stage) {
-  G231012_PawnState pawnState = {(Vector2){256, 256},
+GSpaceexp_GameState *GSpaceexp_Init(TynStage *stage) {
+  GSpaceexp_PawnState pawnState = {(Vector2){256, 256},
                                  V2UP,
                                  (Vector2){256, 256},
                                  V2UP,
@@ -131,11 +131,11 @@ G231012_GameState *G231012_Init(TynStage *stage) {
                                  true,
                                  0,
                                  1};
-  G231012_PawnConfig pawnConfig = {7.0f, 0.05f, 0.3f, 0.2f, 0.03f};
-  G231012_PawnConfig botConfig = {3.0f, 0.15f, 0.2f, 0.2f, 0.1f};
-  G231012_BulletConfig bulletConfig = {12.0f, 1.0f};
+  GSpaceexp_PawnConfig pawnConfig = {7.0f, 0.05f, 0.3f, 0.2f, 0.03f};
+  GSpaceexp_PawnConfig botConfig = {3.0f, 0.15f, 0.2f, 0.2f, 0.1f};
+  GSpaceexp_BulletConfig bulletConfig = {12.0f, 1.0f};
 
-  G231012_GameState *state = malloc(sizeof(G231012_GameState));
+  GSpaceexp_GameState *state = malloc(sizeof(GSpaceexp_GameState));
   state->assets = load();
   state->pawn = pawnState;
   state->pawnConfig = pawnConfig;
@@ -151,14 +151,14 @@ G231012_GameState *G231012_Init(TynStage *stage) {
   state->camera.zoom = 1.0f;
 
   state->bots =
-      (G231012_PawnState *)MemAlloc(sizeof(G231012_PawnState) * BOTS_COUNT);
+      (GSpaceexp_PawnState *)MemAlloc(sizeof(GSpaceexp_PawnState) * BOTS_COUNT);
   state->bot_sprites = (Sprite *)MemAlloc(sizeof(Sprite) * BOTS_COUNT);
-  state->bullets = (G231012_BulletState *)MemAlloc(sizeof(G231012_BulletState) *
+  state->bullets = (GSpaceexp_BulletState *)MemAlloc(sizeof(GSpaceexp_BulletState) *
                                                    BULLETS_COUNT);
   state->bullet_sprites = (Sprite *)MemAlloc(sizeof(Sprite) * BULLETS_COUNT);
 
   for (int i = 0; i < BOTS_COUNT; i++) {
-    G231012_PawnState *bot = &state->bots[i];
+    GSpaceexp_PawnState *bot = &state->bots[i];
     Sprite *sprite = &state->bot_sprites[i];
     bot->control_mode = PAWN_CONTROL_MODE_POINTER;
     bot->alive = false;
@@ -170,7 +170,7 @@ G231012_GameState *G231012_Init(TynStage *stage) {
   }
 
   for (int i = 0; i < BULLETS_COUNT; i++) {
-    G231012_BulletState *bullet = &state->bullets[i];
+    GSpaceexp_BulletState *bullet = &state->bullets[i];
     Sprite *sprite = &state->bullet_sprites[i];
 
     bullet->alive = false;
@@ -178,13 +178,13 @@ G231012_GameState *G231012_Init(TynStage *stage) {
   }
 
   stage->state = state;
-  stage->frame = (TynFrame){&G231012Dispose, &G231012Step, &G231012Draw};
+  stage->frame = (TynFrame){&GSpaceexpDispose, &GSpaceexpStep, &GSpaceexpDraw};
   stage->flags = 0;
 
   return stage->state;
 }
 
-static void StepPawn(G231012_PawnState *pawn, G231012_PawnConfig *config,
+static void StepPawn(GSpaceexp_PawnState *pawn, GSpaceexp_PawnConfig *config,
                      Sprite *sprite) {
   pawn->lookDirection = Vector2Normalize(Vector2Lerp(
       pawn->lookDirection,
@@ -195,10 +195,10 @@ static void StepPawn(G231012_PawnState *pawn, G231012_PawnConfig *config,
   sprite->rotation = Vector2Angle(V2UP, pawn->lookDirection) * RAD2DEG - 180;
 }
 
-static bool SpawnBullet(G231012_GameState *state, Vector2 position,
+static bool SpawnBullet(GSpaceexp_GameState *state, Vector2 position,
                         Vector2 target) {
   for (int i = 0; i < BULLETS_COUNT; i++) {
-    G231012_BulletState *bullet = &state->bullets[i];
+    GSpaceexp_BulletState *bullet = &state->bullets[i];
     if (bullet->alive) {
       continue;
     }
@@ -229,8 +229,8 @@ static bool SpawnBullet(G231012_GameState *state, Vector2 position,
   return false;
 }
 
-static void StepPawnAction(G231012_GameState *state, G231012_PawnState *pawn,
-                           G231012_PawnConfig *config) {
+static void StepPawnAction(GSpaceexp_GameState *state, GSpaceexp_PawnState *pawn,
+                           GSpaceexp_PawnConfig *config) {
   const double timestamp = GetTime();
   if (pawn->action_timestamp + config->action_threshold > timestamp) {
     return;
@@ -239,7 +239,7 @@ static void StepPawnAction(G231012_GameState *state, G231012_PawnState *pawn,
   pawn->action_timestamp = timestamp;
 
   for (int i = 0; i < BOTS_COUNT; i++) {
-    G231012_PawnState *bot = &state->bots[i];
+    GSpaceexp_PawnState *bot = &state->bots[i];
     if (!bot->alive) {
       continue;
     }
@@ -252,9 +252,9 @@ static void StepPawnAction(G231012_GameState *state, G231012_PawnState *pawn,
   }
 }
 
-static void StepBullets(G231012_GameState *state) {
+static void StepBullets(GSpaceexp_GameState *state) {
   for (int i = 0; i < BULLETS_COUNT; i++) {
-    G231012_BulletState *bullet = &state->bullets[i];
+    GSpaceexp_BulletState *bullet = &state->bullets[i];
     if (!bullet->alive) {
       continue;
     }
@@ -271,7 +271,7 @@ static void StepBullets(G231012_GameState *state) {
   }
 }
 
-static void SpawnBots(G231012_GameState *state) {
+static void SpawnBots(GSpaceexp_GameState *state) {
 
   // should be timed instead
   if (GetRandomValue(0, 64) > 2) {
@@ -279,7 +279,7 @@ static void SpawnBots(G231012_GameState *state) {
   }
 
   for (int i = 0; i < BOTS_COUNT; i++) {
-    G231012_PawnState *bot = &state->bots[i];
+    GSpaceexp_PawnState *bot = &state->bots[i];
     Sprite *sprite = &state->bot_sprites[i];
     if (bot->alive) {
       continue;
@@ -304,11 +304,11 @@ static void SpawnBots(G231012_GameState *state) {
   }
 }
 
-static void StepBots(G231012_GameState *state) {
+static void StepBots(GSpaceexp_GameState *state) {
   SpawnBots(state);
 
   for (int i = 0; i < BOTS_COUNT; i++) {
-    G231012_PawnState *bot = &state->bots[i];
+    GSpaceexp_PawnState *bot = &state->bots[i];
     if (!bot->alive) {
       continue;
     }
@@ -319,7 +319,7 @@ static void StepBots(G231012_GameState *state) {
     StepPawn(bot, &state->pawnConfig, &state->bot_sprites[i]);
 
     for (int i = 0; i < BULLETS_COUNT; i++) {
-      G231012_BulletState *bullet = &state->bullets[i];
+      GSpaceexp_BulletState *bullet = &state->bullets[i];
       if (!bullet->alive) {
         continue;
       }
@@ -337,7 +337,7 @@ static void StepBots(G231012_GameState *state) {
   }
 }
 
-static void camera_step(G231012_GameState *state) {
+static void camera_step(GSpaceexp_GameState *state) {
   state->camera.target =
       Vector2Lerp(state->camera.target, state->pawn.targetPosition, 0.01);
   const int hsw = GetScreenWidth() / 2;
@@ -345,7 +345,7 @@ static void camera_step(G231012_GameState *state) {
   state->camera.offset = (Vector2){hsw, hsh};
 }
 
-static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
+static STAGEFLAG GSpaceexpStep(GSpaceexp_GameState *state, int flags) {
   // pre
   Vector2 mousepos = GetMousePosition();
 
@@ -365,7 +365,7 @@ static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
   float closest_dist = Vector2Distance(mousepos, state->pawn.position);
   Vector2 closest_target = mousepos;
   for (int i = 0; i < BOTS_COUNT; i++) {
-    G231012_PawnState *bot = &state->bots[i];
+    GSpaceexp_PawnState *bot = &state->bots[i];
     if (!bot->alive) {
       continue;
     }
@@ -405,9 +405,9 @@ static STAGEFLAG G231012Step(G231012_GameState *state, int flags) {
   return flags;
 }
 
-static void DrawBullets(G231012_GameState *state) {
+static void DrawBullets(GSpaceexp_GameState *state) {
   for (int i = 0; i < BULLETS_COUNT; i++) {
-    G231012_BulletState *bullet = &state->bullets[i];
+    GSpaceexp_BulletState *bullet = &state->bullets[i];
     if (!bullet->alive) {
       continue;
     }
@@ -416,9 +416,9 @@ static void DrawBullets(G231012_GameState *state) {
   }
 }
 
-static void DrawBots(G231012_GameState *state) {
+static void DrawBots(GSpaceexp_GameState *state) {
   for (int i = 0; i < BOTS_COUNT; i++) {
-    G231012_PawnState *bot = &state->bots[i];
+    GSpaceexp_PawnState *bot = &state->bots[i];
     if (!bot->alive) {
       continue;
     }
@@ -427,7 +427,7 @@ static void DrawBots(G231012_GameState *state) {
   }
 }
 
-static void G231012Draw(G231012_GameState *state) {
+static void GSpaceexpDraw(GSpaceexp_GameState *state) {
   BeginMode2D(state->camera);
 
   const int tileposx = state->camera.target.x / 1024;
@@ -464,8 +464,8 @@ static void G231012Draw(G231012_GameState *state) {
 #endif
 }
 
-static void PawnPointerControls(struct G231012_PawnState *state,
-                                struct G231012_PawnConfig *config) {
+static void PawnPointerControls(struct GSpaceexp_PawnState *state,
+                                struct GSpaceexp_PawnConfig *config) {
   Vector2 target = Vector2Subtract(
       state->targetPosition, Vector2Add(state->position, state->direction));
   float distance = Vector2Length(target);
@@ -487,8 +487,8 @@ static void PawnPointerControls(struct G231012_PawnState *state,
   state->position.y += state->direction.y;
 }
 
-static void PawnWASDControls(struct G231012_PawnState *state,
-                             struct G231012_PawnConfig *config) {
+static void PawnWASDControls(struct GSpaceexp_PawnState *state,
+                             struct GSpaceexp_PawnConfig *config) {
   Vector2 inputDirection;
 
   inputDirection.x = 0;
