@@ -36,6 +36,18 @@ static void _init(TestTynmemState *state) {
 }
 static void _dispose(TestTynmemState *state) {}
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
+	if (IsKeyPressed(KEY_SPACE)) {
+		int p = GetRandomValue(0, state->memblock.count);
+
+		int index = 0;
+		for (Memcell *m = state->memblock.first; m; m = m->next) {
+			if (index == p) {
+				MemcellDel(&state->memblock, m, &state->mempool);
+				break;
+			}
+			index += 1;
+		}
+	}
   return flags;
 }
 static void _draw(TestTynmemState *state) {
@@ -56,7 +68,7 @@ static void _draw(TestTynmemState *state) {
   for (Memcell *memcell = state->mempool.mem->first; memcell; memcell = memcell->next) {
 		for (int i = 0; i < MEMPOOL_SIZE; i++) {
 			Memcell *m = &memcell->point[i];
-			DrawRectangle((index * MEMPOOL_SIZE + i) * 16, 70, 16, 16, m->point == 0 ? GREEN : GRAY);
+			DrawRectangle((index * MEMPOOL_SIZE + i) * 16, 70, 16, 16, m->allocated == true ? GREEN : GRAY);
 		}
     index += 1;
 	}

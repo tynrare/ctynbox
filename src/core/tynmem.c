@@ -1,6 +1,9 @@
 #include "../include/tynmem.h"
 #include <stdlib.h>
 
+#define POOL_REQS \
+	"- Динамическая аллокация памяти блоками"
+
 Memblock *MemblockInit(Memblock *memblock) {
   memblock->count = 0;
   memblock->first = 0;
@@ -8,6 +11,8 @@ Memblock *MemblockInit(Memblock *memblock) {
 
   return memblock;
 }
+
+
 Mempool *MempoolInit(Mempool *mempool) {
   mempool->mem = malloc(sizeof(Memblock));
   mempool->pool = malloc(sizeof(Memblock));
@@ -16,6 +21,8 @@ Mempool *MempoolInit(Mempool *mempool) {
 
   return MempoolExtend(mempool);
 }
+
+#ifdef POOL_WORKS
 
 Mempool *MempoolExtend(Mempool *mempool) {
   Memcell *memcell = malloc(sizeof(Memcell));
@@ -37,9 +44,72 @@ Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link) {
   Memcell *memcell = MemcellDel(pool->pool, pool->pool->last, 0);
 
   memcell->point = link;
+	memcell->allocated = true;
 
   return MemcellAdd(memblock, memcell);
 }
+
+Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
+  if (memblock->first == memcell) {
+    memblock->first = memcell->next;
+  }
+  if (memblock->last == memcell) {
+    memblock->last = memcell->prev;
+  }
+  if (memcell->prev && memcell->next) {
+    memcell->prev->next = memcell->next;
+    memcell->next->prev = memcell->prev;
+  }
+
+  memcell->prev = 0;
+  memcell->next = 0;
+	memcell->allocated = false;
+  memblock->count -= 1;
+
+	if (mempool) {
+		MemcellAdd(mempool->pool, memcell);
+	}
+
+  return memcell;
+}
+
+#else
+
+Mempool *MempoolExtend(Mempool *mempool) {
+	// disabled.
+	return mempool;
+}
+
+Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link) {
+	Memcell *memcell = malloc(sizeof(Memcell));
+
+  memcell->point = link;
+	memcell->allocated = true;
+
+  return MemcellAdd(memblock, memcell);
+}
+
+Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
+  if (memblock->first == memcell) {
+    memblock->first = memcell->next;
+  }
+  if (memblock->last == memcell) {
+    memblock->last = memcell->prev;
+  }
+  if (memcell->prev && memcell->next) {
+    memcell->prev->next = memcell->next;
+    memcell->next->prev = memcell->prev;
+  }
+
+  memcell->prev = 0;
+  memcell->next = 0;
+	memcell->allocated = false;
+  memblock->count -= 1;
+
+  return memcell;
+}
+
+#endif
 
 Memcell *MemcellAdd(Memblock *memblock, Memcell *memcell) {
   memcell->prev = 0;
@@ -55,30 +125,6 @@ Memcell *MemcellAdd(Memblock *memblock, Memcell *memcell) {
 
   memblock->last = memcell;
   memblock->count += 1;
-
-  return memcell;
-}
-
-Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
-  if (memblock->first == memcell) {
-    memblock->first = memcell->next;
-  }
-  if (memblock->last == memcell) {
-    memblock->last = memcell->prev;
-  }
-  if (memcell->prev && memcell->next) {
-    memcell->prev->next = memcell->next;
-    memcell->next->prev = memcell->prev;
-  }
-
-  memcell->point = 0;
-  memcell->prev = 0;
-  memcell->next = 0;
-  memblock->count -= 1;
-
-	if (mempool) {
-		MemcellAdd(mempool->pool, memcell);
-	}
 
   return memcell;
 }
