@@ -35,7 +35,7 @@ Memblock *MemblockInit(Memblock *memblock);
 void MemblockDispose(Memblock *memblock);
 Memcell *MemcellAdd(Memblock *memblock, Memcell *memcell);
 Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link);
-Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool);
+void MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool);
 Mempool *MempoolInit(Mempool *memblock);
 void MempoolDispose(Mempool *mempool);
 Mempool *MempoolExtend(Mempool *mempool);

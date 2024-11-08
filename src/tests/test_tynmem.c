@@ -26,7 +26,7 @@ static void _add_blocks(TestTynmemState *state) {
   Memblock *memblock = &state->memblock;
   Mempool *mempool = &state->mempool;
 
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 2; i++) {
     Color *c = malloc(sizeof(Color));
     Memcell *memcell = MemcellAllocate(memblock, mempool, c);
     c->a = 255;
@@ -49,9 +49,11 @@ static void _dispose(TestTynmemState *state) {
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
   if (IsKeyPressed(KEY_SPACE)) {
-    int p = GetRandomValue(0, state->memblock.count);
-
+    //int p = GetRandomValue(0, state->memblock.count - 1);
+		//int p = state->memblock.count - 1;
+		int p = 1;
     int index = 0;
+
     for (Memcell *m = state->memblock.first; m; m = m->next) {
       if (index == p) {
         MemcellDel(&state->memblock, m, &state->mempool);

@@ -101,12 +101,13 @@ Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link) {
   return MemcellAdd(memblock, memcell);
 }
 
-Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
+void MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
   if (memblock->first == memcell) {
     memblock->first = memcell->next;
   }
   if (memblock->last == memcell) {
     memblock->last = memcell->prev;
+		memblock->last->next = 0;
   }
   if (memcell->prev && memcell->next) {
     memcell->prev->next = memcell->next;
@@ -114,8 +115,7 @@ Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
   }
 
 	free(memcell);
-
-  return memcell;
+  memblock->count -= 1;
 }
 
 #endif
