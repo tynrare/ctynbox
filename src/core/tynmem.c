@@ -1,8 +1,7 @@
 #include "../include/tynmem.h"
 #include <stdlib.h>
 
-#define POOL_REQS \
-	"- Динамическая аллокация памяти блоками"
+#define POOL_REQS "- Динамическая аллокация памяти блоками"
 
 Memblock *MemblockInit(Memblock *memblock) {
   memblock->count = 0;
@@ -14,25 +13,25 @@ Memblock *MemblockInit(Memblock *memblock) {
 
 void MemblockDispose(Memblock *memblock) {
   for (Memcell *m = memblock->first; m; m = m->next) {
-		if (m->point) {
-			free(m->point);
-		}
-		free(m);
-	}
+    if (m->point) {
+      free(m->point);
+    }
+    free(m);
+  }
 }
 
 Mempool *MempoolInit(Mempool *mempool) {
   mempool->mem = malloc(sizeof(Memblock));
   mempool->pool = malloc(sizeof(Memblock));
-	MemblockInit(mempool->mem);
-	MemblockInit(mempool->pool);
+  MemblockInit(mempool->mem);
+  MemblockInit(mempool->pool);
 
   return MempoolExtend(mempool);
 }
 
 void MempoolDispose(Mempool *mempool) {
-	MemblockDispose(mempool->mem);
-	MemblockDispose(mempool->pool);
+  MemblockDispose(mempool->mem);
+  MemblockDispose(mempool->pool);
 }
 
 #ifdef POOL_WORKS
@@ -57,7 +56,7 @@ Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link) {
   Memcell *memcell = MemcellDel(pool->pool, pool->pool->last, 0);
 
   memcell->point = link;
-	memcell->allocated = true;
+  memcell->allocated = true;
 
   return MemcellAdd(memblock, memcell);
 }
@@ -65,9 +64,11 @@ Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link) {
 Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
   if (memblock->first == memcell) {
     memblock->first = memcell->next;
+    memblock->first->prev = 0;
   }
   if (memblock->last == memcell) {
     memblock->last = memcell->prev;
+    memblock->last->next = 0;
   }
   if (memcell->prev && memcell->next) {
     memcell->prev->next = memcell->next;
@@ -76,12 +77,12 @@ Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
 
   memcell->prev = 0;
   memcell->next = 0;
-	memcell->allocated = false;
+  memcell->allocated = false;
   memblock->count -= 1;
 
-	if (mempool) {
-		MemcellAdd(mempool->pool, memcell);
-	}
+  if (mempool) {
+    MemcellAdd(mempool->pool, memcell);
+  }
 
   return memcell;
 }
@@ -89,12 +90,12 @@ Memcell *MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
 #else
 
 Mempool *MempoolExtend(Mempool *mempool) {
-	// disabled.
-	return mempool;
+  // disabled.
+  return mempool;
 }
 
 Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link) {
-	Memcell *memcell = malloc(sizeof(Memcell));
+  Memcell *memcell = malloc(sizeof(Memcell));
 
   memcell->point = link;
 
@@ -102,19 +103,21 @@ Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link) {
 }
 
 void MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool) {
-  if (memblock->first == memcell) {
+  if (memblock->count == 1) {
+    memblock->first = 0;
+    memblock->last = 0;
+  } else if (memblock->first == memcell) {
     memblock->first = memcell->next;
-  }
-  if (memblock->last == memcell) {
+    memblock->first->prev = 0;
+  } else if (memblock->last == memcell) {
     memblock->last = memcell->prev;
-		memblock->last->next = 0;
-  }
-  if (memcell->prev && memcell->next) {
+    memblock->last->next = 0;
+  } else if (memcell->prev && memcell->next) {
     memcell->prev->next = memcell->next;
     memcell->next->prev = memcell->prev;
   }
 
-	free(memcell);
+  free(memcell);
   memblock->count -= 1;
 }
 

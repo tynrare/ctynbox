@@ -26,7 +26,7 @@ static void _add_blocks(TestTynmemState *state) {
   Memblock *memblock = &state->memblock;
   Mempool *mempool = &state->mempool;
 
-  for (int i = 0; i < 2; i++) {
+  for (int i = 0; i < 7; i++) {
     Color *c = malloc(sizeof(Color));
     Memcell *memcell = MemcellAllocate(memblock, mempool, c);
     c->a = 255;
@@ -48,21 +48,23 @@ static void _dispose(TestTynmemState *state) {
 }
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
-  if (IsKeyPressed(KEY_SPACE)) {
-    //int p = GetRandomValue(0, state->memblock.count - 1);
-		//int p = state->memblock.count - 1;
-		int p = 1;
+  if (IsKeyDown(KEY_SPACE)) {
+    int p = GetRandomValue(0, state->memblock.count - 1);
+		//int p = 6;
     int index = 0;
+
+		TraceLog(LOG_INFO, TextFormat("del %d", p));
 
     for (Memcell *m = state->memblock.first; m; m = m->next) {
       if (index == p) {
+				free(m->point);
         MemcellDel(&state->memblock, m, &state->mempool);
         break;
       }
       index += 1;
     }
   }
-  if (IsKeyPressed(KEY_ENTER)) {
+  if (IsKeyDown(KEY_ENTER)) {
     _add_blocks(state);
   }
   return flags;
@@ -72,7 +74,9 @@ static void _draw(TestTynmemState *state) {
   int index = 0;
   for (Memcell *m = state->memblock.first; m; m = m->next) {
     Color *c = m->point;
-    DrawRectangle(index * 16, 50, 16, 16, *c);
+		const int x = index % 16;
+		const int y = index / 16;
+    DrawRectangle(x * 16, 50 + y * 16, 16, 16, *c);
     index += 1;
   }
 
