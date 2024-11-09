@@ -21,19 +21,20 @@ typedef struct Memblock {
 typedef struct Mempool {
 	Memblock *mem;
 	Memblock *pool;
+	unsigned short int cellsize;
 } Mempool;
 
 typedef struct Memspace {
 	struct Memblock *neighbours;
-	struct Memblock *content;
+	struct Memblock *contents;
 } Memspace;
 
-Memblock *MemblockInit(Memblock *memblock);
+Memblock *MemblockInit(Memblock *memblock, unsigned short int cellsize);
 void MemblockDispose(Memblock *memblock);
 Memcell *MemcellAdd(Memblock *memblock, Memcell *memcell);
-Memcell *MemcellAllocate(Memblock *memblock, void *link);
+Memcell *MemcellAllocate(Memblock *memblock);
 void MemcellDel(Memblock *memblock, Memcell *memcell);
-Mempool *MempoolInit(Mempool *memblock);
+Mempool *MempoolInit(Mempool *memblock, unsigned short int cellsize);
 void MempoolDispose(Mempool *mempool);
 Mempool *MempoolExtend(Mempool *mempool);
 Mempool *MempoolShrink(Mempool *mempool);

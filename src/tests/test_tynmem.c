@@ -26,20 +26,21 @@ static void _add_blocks(TestTynmemState *state) {
   Memblock *memblock = &state->memblock;
 
   for (int i = 0; i < 7; i++) {
-    Color *c = malloc(sizeof(Color));
-    Memcell *memcell = MemcellAllocate(memblock, c);
+    Memcell *memcell = MemcellAllocate(memblock);
+    Color *c = memcell->point;
     c->a = 255;
     c->r = GetRandomValue(0, 255);
     c->g = GetRandomValue(0, 255);
     c->b = GetRandomValue(0, 255);
   }
 }
+
 static void _add_memspaces(TestTynmemState *state) {
 }
 
 static void _init(TestTynmemState *state) {
-  Memblock *memblock = MemblockInit(&state->memblock);
-  Memblock *memspaces = MemblockInit(&state->memspaces);
+  Memblock *memblock = MemblockInit(&state->memblock, sizeof(Color));
+  Memblock *memspaces = MemblockInit(&state->memspaces, 1);
 
   _add_blocks(state);
 	_add_memspaces(state);
@@ -56,7 +57,6 @@ static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
 
     for (Memcell *m = state->memblock.first; m; m = m->next) {
       if (index == p) {
-				free(m->point);
         MemcellDel(&state->memblock, m);
         break;
       }
