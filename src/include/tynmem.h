@@ -1,7 +1,5 @@
 #include <stdbool.h>
 
-#define POOL_WORKS_disable
-
 #ifndef TYNMEM0_H
 #define TYNMEM0_H
 
@@ -17,6 +15,7 @@ typedef struct Memblock {
 	struct Memcell *first;
 	struct Memcell *last;
 	int count;
+	struct Mempool *mempool;
 } Memblock;
 
 typedef struct Mempool {
@@ -24,21 +23,20 @@ typedef struct Mempool {
 	Memblock *pool;
 } Mempool;
 
-typedef struct Memgrid {
-	struct Memgrid *top;
-	struct Memgrid *right;
-	struct Memgrid *bottom;
-	struct Memgrid *left;
-} Memgrid;
+typedef struct Memspace {
+	struct Memblock *neighbours;
+	struct Memblock *content;
+} Memspace;
 
 Memblock *MemblockInit(Memblock *memblock);
 void MemblockDispose(Memblock *memblock);
 Memcell *MemcellAdd(Memblock *memblock, Memcell *memcell);
-Memcell *MemcellAllocate(Memblock *memblock, Mempool *pool, void *link);
-void MemcellDel(Memblock *memblock, Memcell *memcell, Mempool *mempool);
+Memcell *MemcellAllocate(Memblock *memblock, void *link);
+void MemcellDel(Memblock *memblock, Memcell *memcell);
 Mempool *MempoolInit(Mempool *memblock);
 void MempoolDispose(Mempool *mempool);
 Mempool *MempoolExtend(Mempool *mempool);
+Mempool *MempoolShrink(Mempool *mempool);
 
 #endif
 

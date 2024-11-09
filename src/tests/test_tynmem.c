@@ -24,41 +24,40 @@ TestTynmemState *TestTynmemInit(TynStage *stage) {
 }
 static void _add_blocks(TestTynmemState *state) {
   Memblock *memblock = &state->memblock;
-  Mempool *mempool = &state->mempool;
 
   for (int i = 0; i < 7; i++) {
     Color *c = malloc(sizeof(Color));
-    Memcell *memcell = MemcellAllocate(memblock, mempool, c);
+    Memcell *memcell = MemcellAllocate(memblock, c);
     c->a = 255;
     c->r = GetRandomValue(0, 255);
     c->g = GetRandomValue(0, 255);
     c->b = GetRandomValue(0, 255);
   }
 }
+static void _add_memspaces(TestTynmemState *state) {
+}
+
 static void _init(TestTynmemState *state) {
   Memblock *memblock = MemblockInit(&state->memblock);
-  Mempool *mempool = MempoolInit(&state->mempool);
+  Memblock *memspaces = MemblockInit(&state->memspaces);
 
   _add_blocks(state);
+	_add_memspaces(state);
 }
 
 static void _dispose(TestTynmemState *state) {
-	MempoolDispose(&state->mempool);
 	MemblockDispose(&state->memblock);
 }
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
   if (IsKeyDown(KEY_SPACE)) {
     int p = GetRandomValue(0, state->memblock.count - 1);
-		//int p = 6;
     int index = 0;
-
-		TraceLog(LOG_INFO, TextFormat("del %d", p));
 
     for (Memcell *m = state->memblock.first; m; m = m->next) {
       if (index == p) {
 				free(m->point);
-        MemcellDel(&state->memblock, m, &state->mempool);
+        MemcellDel(&state->memblock, m);
         break;
       }
       index += 1;
@@ -80,13 +79,14 @@ static void _draw(TestTynmemState *state) {
     index += 1;
   }
 
-  DrawText(TextFormat("POOL unimplemented."), 16, 2, 10, BLACK);
+  DrawText(TextFormat("POOL shrink: unimplemented."), 16, 2, 10, BLACK);
   DrawText(TextFormat("Memory blocks allocated: %d",
-                      state->mempool.mem->count * MEMPOOL_SIZE),
+                      state->memblock.mempool->mem->count * MEMPOOL_SIZE),
            16, 16, 20, GREEN);
-  DrawText(TextFormat("Memory blocks free: %d", state->mempool.pool->count), 16,
+  DrawText(TextFormat("Memory blocks free: %d", state->memblock.mempool->pool->count), 16,
            32, 20, GREEN);
 
+	/*
   index = 0;
   for (Memcell *memcell = state->mempool.mem->first; memcell;
        memcell = memcell->next) {
@@ -97,6 +97,7 @@ static void _draw(TestTynmemState *state) {
     }
     index += 1;
   }
+	*/
 }
 
 static char *_cmdin(TestTynmemState *state, STAGEFLAG *flags) { return NULL; }

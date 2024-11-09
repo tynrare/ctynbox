@@ -6,7 +6,7 @@
 
 typedef struct {
 	Memblock memblock;
-	Mempool mempool;
+	Memblock memspaces;
 } TestTynmemState;
 
 TestTynmemState* TestTynmemInit(TynStage* stage);
