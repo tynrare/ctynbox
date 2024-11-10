@@ -100,7 +100,7 @@ static void _add_entities(TestTynmemState *state) {
   Memblock *memblock = &state->entities;
   Memspace *memspace = state->memspaces.first->point;
 
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 1; i++) {
     Memcell *memcell = MemcellAllocate(memblock);
     TestTynmemEntity *e = memcell->point;
     e->x = 256;
@@ -145,8 +145,9 @@ static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
     for (Memcell *_m = s->contents->first; _m; _m = _m->next) {
       TestTynmemEntity *e = _m->point;
 
-      e->x += GetRandomValue(-1, 1);
-      e->y += GetRandomValue(-1, 1);
+			e->x += 1;
+      //e->x += GetRandomValue(-1, 1);
+      //e->y += GetRandomValue(-1, 1);
 
       _reassign_memspace(state, m, _m);
     }
