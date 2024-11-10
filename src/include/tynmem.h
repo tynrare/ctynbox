@@ -7,6 +7,7 @@ typedef struct Memcell {
 	struct Memcell *prev;
 	struct Memcell *next;
 	void *point;
+	int poolindex;
 } Memcell;
 
 #define MEMPOOL_SIZE 8
@@ -16,6 +17,7 @@ typedef struct Memblock {
 	struct Memcell *last;
 	int count;
 	struct Mempool *mempool;
+	//struct Memblock *list;
 } Memblock;
 
 typedef struct Mempool {
@@ -33,6 +35,8 @@ Memblock *MemblockInit(Memblock *memblock, unsigned short int cellsize);
 void MemblockDispose(Memblock *memblock);
 Memcell *MemcellAdd(Memblock *memblock, Memcell *memcell);
 Memcell *MemcellAllocate(Memblock *memblock);
+Memcell *MemcellGet(Memblock *memblock, int index);
+// Memcell *MemcellInject(Memblock *memblock, Memcell *memcell, int index);
 void MemcellDel(Memblock *memblock, Memcell *memcell);
 Mempool *MempoolInit(Mempool *memblock, unsigned short int cellsize);
 void MempoolDispose(Mempool *mempool);

@@ -51,17 +51,12 @@ static void _dispose(TestTynmemState *state) {
 }
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
-  if (IsKeyDown(KEY_SPACE)) {
-    int p = GetRandomValue(0, state->memblock.count - 1);
-    int index = 0;
-
-    for (Memcell *m = state->memblock.first; m; m = m->next) {
-      if (index == p) {
-        MemcellDel(&state->memblock, m);
-        break;
-      }
-      index += 1;
-    }
+  if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyDown(KEY_SPACE) || IsKeyPressed(KEY_SPACE)) {
+    int i = GetRandomValue(0, state->memblock.count - 1);
+		Memcell *memcell = MemcellGet(&state->memblock, i);
+		if (memcell) {
+        MemcellDel(&state->memblock, memcell);
+		}
   }
   if (IsKeyDown(KEY_ENTER)) {
     _add_blocks(state);
