@@ -81,17 +81,36 @@ static void _reassign_memspace(TestTynmemState *state, Memcell *spacecell, Memce
   }
 
 	MemcellDel(memspace->contents, entitycell);
+
   if (!neighbour) {
 		Vector2 d = Vector2Normalize(Vector2Subtract(v2, v1));
+		d.x = roundf(d.x);
+		d.y = roundf(d.y);
+
 		Memcell *nc = _add_memspace(state);
 		neighbour = nc->point;
-		neighbour->x = memspace->x + d.x * memspace_radius;
-		neighbour->y = memspace->y;
+
+		neighbour->x = memspace->x + d.x * memspace_radius / 0.707;
+		neighbour->y = memspace->y + d.y * memspace_radius / 0.707;
+
 		Memcell *nlink = MemcellAllocate(neighbour->neighbours);
 		nlink->point = memspace;
+
+		for (Memcell *m = memspace->neighbours->first; m; m = m->next) {
+			Memspace *n = m->point;
+			v3.x = n->x;
+			v3.y = n->y;
+			const float _d2 = Vector2Distance(v1, v3);
+			if (_d2 < memspace_radius + 1) {
+				Memcell *_nlink = MemcellAllocate(neighbour->neighbours);
+				_nlink->point = n;
+			}
+		}
+
 		Memcell *mlink = MemcellAllocate(memspace->neighbours);
 		mlink->point = neighbour;
   } 
+
 	Memcell *elink = MemcellAllocate(neighbour->contents);
 	elink->point = entity;
 }
@@ -100,7 +119,7 @@ static void _add_entities(TestTynmemState *state) {
   Memblock *memblock = &state->entities;
   Memspace *memspace = state->memspaces.first->point;
 
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < 7; i++) {
     Memcell *memcell = MemcellAllocate(memblock);
     TestTynmemEntity *e = memcell->point;
     e->x = 256;
@@ -145,9 +164,8 @@ static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
     for (Memcell *_m = s->contents->first; _m; _m = _m->next) {
       TestTynmemEntity *e = _m->point;
 
-			e->x += 1;
-      //e->x += GetRandomValue(-1, 1);
-      //e->y += GetRandomValue(-1, 1);
+      e->x += GetRandomValue(-1, 1);
+      e->y += GetRandomValue(-1, 1);
 
       _reassign_memspace(state, m, _m);
     }
@@ -169,7 +187,7 @@ static void _draw(TestTynmemState *state) {
   DrawText(TextFormat("Memspaces count: %d", state->memspaces.count), 190, 2, 10, BLACK);
   for (Memcell *m = state->memspaces.first; m; m = m->next) {
     Memspace *s = m->point;
-    DrawCircleLines(s->x, s->y, memspace_radius, BLUE);
+    DrawCircleLines(s->x, s->y, memspace_radius, Fade(BLUE, 0.3));
     for (Memcell *_m = s->contents->first; _m; _m = _m->next) {
       TestTynmemEntity *e = _m->point;
       DrawRectangle(e->x - 2, e->y - 2, 4, 4, RED);
