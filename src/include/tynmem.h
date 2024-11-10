@@ -26,13 +26,6 @@ typedef struct Mempool {
 	unsigned short int cellsize;
 } Mempool;
 
-typedef struct Memspace {
-	struct Memblock *neighbours;
-	struct Memblock *contents;
-	float x;
-	float y;
-} Memspace;
-
 Memblock *MemblockInit(Memblock *memblock, unsigned short int cellsize);
 void MemblockDispose(Memblock *memblock);
 Memcell *MemcellAdd(Memblock *memblock, Memcell *memcell);

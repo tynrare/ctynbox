@@ -1,4 +1,5 @@
 #include "../include/test_tynmem.h"
+
 #include <raylib.h>
 #include <raymath.h>
 #include <stdlib.h>
@@ -39,20 +40,17 @@ static void _add_blocks(TestTynmemState *state) {
 
 static float memspace_radius = 16;
 
-static Memcell *_add_memspace(TestTynmemState *state) {
+static Memspace *_add_memspace(TestTynmemState *state) {
   Memblock *memblock = &state->memspaces;
+	Memspace *memspace = MemspaceAllocate(memblock);
+  memspace->x = 256;
+  memspace->y = 256;
 
-  Memcell *memcell = MemcellAllocate(memblock);
-  Memspace *s = memcell->point;
-  s->contents = MemblockInit(malloc(sizeof(Memblock)), 0);
-  s->neighbours = MemblockInit(malloc(sizeof(Memblock)), 0);
-  s->x = 256;
-  s->y = 256;
-
-	return memcell;
+	return memspace;
 }
 
 static void _reassign_memspace(TestTynmemState *state, Memcell *spacecell, Memcell *entitycell) {
+	return;
   TestTynmemEntity *entity = entitycell->point;
   Memspace *memspace = spacecell->point;
   Vector2 v1 = {0};
@@ -87,8 +85,7 @@ static void _reassign_memspace(TestTynmemState *state, Memcell *spacecell, Memce
 		d.x = roundf(d.x);
 		d.y = roundf(d.y);
 
-		Memcell *nc = _add_memspace(state);
-		neighbour = nc->point;
+		neighbour = _add_memspace(state);
 
 		neighbour->x = memspace->x + d.x * memspace_radius / 0.707;
 		neighbour->y = memspace->y + d.y * memspace_radius / 0.707;
@@ -124,8 +121,7 @@ static void _add_entities(TestTynmemState *state) {
     TestTynmemEntity *e = memcell->point;
     e->x = 256;
     e->y = 256;
-		Memcell *memlink = MemcellAllocate(memspace->contents);
-		memlink->point = e;
+		MemspaceAssign(memspace, memcell);
   }
 }
 
@@ -142,7 +138,12 @@ static void _init(TestTynmemState *state) {
 static void _dispose(TestTynmemState *state) {
   MemblockDispose(&state->memblock);
   MemblockDispose(&state->entities);
-  // todo dispose memspaces here
+	MemspaceDispose(&state->memspaces);
+}
+
+static void step_entity(Memcell *memcell) {
+	TestTynmemEntity *e = memcell->point;
+	DrawRectangle(e->x - 2, e->y - 2, 4, 4, RED);
 }
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
@@ -166,8 +167,6 @@ static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
 
       e->x += GetRandomValue(-1, 1);
       e->y += GetRandomValue(-1, 1);
-
-      _reassign_memspace(state, m, _m);
     }
   }
 
@@ -185,6 +184,9 @@ static void _draw(TestTynmemState *state) {
   }
 
   DrawText(TextFormat("Memspaces count: %d", state->memspaces.count), 190, 2, 10, BLACK);
+	MemspaceUpdate(state->memspaces.first->point, step_entity);
+
+	/*
   for (Memcell *m = state->memspaces.first; m; m = m->next) {
     Memspace *s = m->point;
     DrawCircleLines(s->x, s->y, memspace_radius, Fade(BLUE, 0.3));
@@ -194,12 +196,13 @@ static void _draw(TestTynmemState *state) {
       DrawLine(s->x, s->y, e->x, e->y, GREEN);
     }
   }
+	*/
 
   DrawText(TextFormat("POOL shrink: unimplemented."), 16, 2, 10, BLACK);
-  DrawText(TextFormat("Memory blocks allocated: %d",
+  DrawText(TextFormat("t#1. Memory blocks allocated: %d",
                       state->memblock.mempool->mem->count * MEMPOOL_SIZE),
            16, 16, 20, GREEN);
-  DrawText(TextFormat("Memory blocks free: %d",
+  DrawText(TextFormat("t#1. Memory blocks free: %d",
                       state->memblock.mempool->pool->count),
            16, 32, 20, GREEN);
 

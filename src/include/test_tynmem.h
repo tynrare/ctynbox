@@ -1,5 +1,6 @@
 #include "tynroar_lib.h"
 #include "tynmem.h"
+#include "tynmemspace.h"
 
 #ifndef TEST_TYNMEM0_H
 #define TEST_TYNMEM0_H
