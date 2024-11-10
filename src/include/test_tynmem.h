@@ -5,8 +5,14 @@
 #define TEST_TYNMEM0_H
 
 typedef struct {
+	float x;
+	float y;
+} TestTynmemEntity;
+
+typedef struct {
 	Memblock memblock;
 	Memblock memspaces;
+	Memblock entities;
 } TestTynmemState;
 
 TestTynmemState* TestTynmemInit(TynStage* stage);

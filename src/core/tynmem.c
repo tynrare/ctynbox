@@ -1,32 +1,32 @@
 #include "../include/tynmem.h"
 #include <stdlib.h>
 
-#define POOL_REQS \
-	"- Динамическая аллокация памяти блоками" \
-	"- Возвращение исходного порядка при деаллокации"
+#define POOL_REQS                                                              \
+  "- Динамическая аллокация памяти блоками"  \
+  "- Возвращение исходного порядка при деаллокации"
 
 static Memblock *_memblock_reset(Memblock *memblock) {
   memblock->count = 0;
   memblock->first = 0;
   memblock->last = 0;
   memblock->mempool = 0;
-  //memblock->list = 0;
+  // memblock->list = 0;
 
   return memblock;
 }
 
 static Memblock *_memblock_init(Memblock *memblock) {
-	_memblock_reset(memblock);
-  //memblock->list = malloc(sizeof(Memblock));
-	//_memblock_reset(memblock->list);
+  _memblock_reset(memblock);
+  // memblock->list = malloc(sizeof(Memblock));
+  //_memblock_reset(memblock->list);
 
   return memblock;
 }
 
 Memblock *MemblockInit(Memblock *memblock, unsigned short int cellsize) {
   _memblock_init(memblock);
-  memblock->mempool = malloc(sizeof(Mempool));
-  MempoolInit(memblock->mempool, cellsize);
+	memblock->mempool = malloc(sizeof(Mempool));
+	MempoolInit(memblock->mempool, cellsize);
 
   return memblock;
 }
@@ -53,11 +53,11 @@ void MempoolDispose(Mempool *mempool) {
 }
 
 void MemblockDispose(Memblock *memblock) {
-	/*
-	if (memblock->list) {
-		MemblockDispose(memblock->list);
-	}
-	*/
+  /*
+  if (memblock->list) {
+          MemblockDispose(memblock->list);
+  }
+  */
 
   if (memblock->mempool) {
     MempoolDispose(memblock->mempool);
@@ -78,12 +78,17 @@ Mempool *MempoolExtend(Mempool *mempool) {
   Memcell *pool = calloc(MEMPOOL_SIZE, sizeof(Memcell));
   memcell->point = pool;
 
-  void *mem = calloc(MEMPOOL_SIZE, mempool->cellsize);
+	void *mem = 0;
+	if (mempool->cellsize) {
+		mem = calloc(MEMPOOL_SIZE, mempool->cellsize);
+	}
 
   for (int i = 0; i < MEMPOOL_SIZE; i++) {
     Memcell *m = pool + i;
-    m->point = mem + i * mempool->cellsize;
-		//m->poolindex = mempool->mem->count * MEMPOOL_SIZE + i;
+		if (mem) {
+			m->point = mem + i * mempool->cellsize;
+		}
+    // m->poolindex = mempool->mem->count * MEMPOOL_SIZE + i;
     MemcellAdd(mempool->pool, m);
   }
 
@@ -123,21 +128,21 @@ Memcell *MemcellAdd(Memblock *memblock, Memcell *memcell) {
   memblock->last = memcell;
   memblock->count += 1;
 
-	/*
-	if (!memblock->list) {
-		return memcell;
-	}
+  /*
+  if (!memblock->list) {
+          return memcell;
+  }
 
-	if (memblock->list->count * MEMPOOL_SIZE < memblock->count) {
-		Memcell *m = malloc(sizeof(Memcell));
-		Memcell **list = calloc(MEMPOOL_SIZE, sizeof(void*));
-		m->point = list;
-		MemcellAdd(memblock->list, m);
-	}
+  if (memblock->list->count * MEMPOOL_SIZE < memblock->count) {
+          Memcell *m = malloc(sizeof(Memcell));
+          Memcell **list = calloc(MEMPOOL_SIZE, sizeof(void*));
+          m->point = list;
+          MemcellAdd(memblock->list, m);
+  }
 
-	Memcell **list = memblock->list->last->point;
-	list[memblock->count % MEMPOOL_SIZE] = memcell;
-	*/
+  Memcell **list = memblock->list->last->point;
+  list[memblock->count % MEMPOOL_SIZE] = memcell;
+  */
 
   return memcell;
 }
@@ -169,35 +174,35 @@ void MemcellDel(Memblock *memblock, Memcell *memcell) {
 }
 
 Memcell *MemcellGet(Memblock *memblock, int index) {
-    int i = 0;
-    for (Memcell *m = memblock->first; m; m = m->next) {
-      if (index == i) {
-				return m;
-      }
-      i += 1;
+  int i = 0;
+  for (Memcell *m = memblock->first; m; m = m->next) {
+    if (index == i) {
+      return m;
     }
+    i += 1;
+  }
 
-		return NULL;
+  return NULL;
 
-		/*
-	const int list_index = index / MEMPOOL_SIZE;
-	const int cell_index = index % MEMPOOL_SIZE;
-	TraceLog(LOG_INFO, TextFormat("%d, %d, %d", index, list_index, cell_index));
-	TraceLog(LOG_INFO, TextFormat("%d", memblock->list->count));
+  /*
+const int list_index = index / MEMPOOL_SIZE;
+const int cell_index = index % MEMPOOL_SIZE;
+TraceLog(LOG_INFO, TextFormat("%d, %d, %d", index, list_index, cell_index));
+TraceLog(LOG_INFO, TextFormat("%d", memblock->list->count));
 
-	int i = 0;
-	for (Memcell *m = memblock->list->first; m; m = m->next) {
-		if (i != list_index) {
-			i += 1;
-			continue;
-		}
+int i = 0;
+for (Memcell *m = memblock->list->first; m; m = m->next) {
+  if (i != list_index) {
+          i += 1;
+          continue;
+  }
 
-		Memcell **list = m->point;
-		Memcell *memcell = list[cell_index];
+  Memcell **list = m->point;
+  Memcell *memcell = list[cell_index];
 
-		return memcell;
-	};
+  return memcell;
+};
 
-	return NULL;
-	*/
+return NULL;
+*/
 }

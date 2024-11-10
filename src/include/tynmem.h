@@ -29,6 +29,8 @@ typedef struct Mempool {
 typedef struct Memspace {
 	struct Memblock *neighbours;
 	struct Memblock *contents;
+	float x;
+	float y;
 } Memspace;
 
 Memblock *MemblockInit(Memblock *memblock, unsigned short int cellsize);
