@@ -43,14 +43,13 @@ static float memspace_radius = 16;
 static Memspace *_add_memspace(TestTynmemState *state) {
   Memblock *memblock = &state->memspaces;
 	Memspace *memspace = MemspaceAllocate(memblock);
-  memspace->x = 256;
-  memspace->y = 256;
 
 	return memspace;
 }
 
 static void _reassign_memspace(TestTynmemState *state, Memcell *spacecell, Memcell *entitycell) {
 	return;
+	/*
   TestTynmemEntity *entity = entitycell->point;
   Memspace *memspace = spacecell->point;
   Vector2 v1 = {0};
@@ -110,13 +109,14 @@ static void _reassign_memspace(TestTynmemState *state, Memcell *spacecell, Memce
 
 	Memcell *elink = MemcellAllocate(neighbour->contents);
 	elink->point = entity;
+	*/
 }
 
 static void _add_entities(TestTynmemState *state) {
   Memblock *memblock = &state->entities;
   Memspace *memspace = state->memspaces.first->point;
 
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 16; i++) {
     Memcell *memcell = MemcellAllocate(memblock);
     TestTynmemEntity *e = memcell->point;
     e->x = 256;
@@ -141,9 +141,13 @@ static void _dispose(TestTynmemState *state) {
 	MemspaceDispose(&state->memspaces);
 }
 
-static void step_entity(Memcell *memcell) {
+static Tynvec2 step_entity(Memcell *memcell) {
 	TestTynmemEntity *e = memcell->point;
 	DrawRectangle(e->x - 2, e->y - 2, 4, 4, RED);
+	e->x += GetRandomValue(-1, 1);
+	e->y += GetRandomValue(-1, 1);
+
+	return (Tynvec2){ e->x, e->y };
 }
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
@@ -157,17 +161,6 @@ static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
   }
   if (IsKeyDown(KEY_ENTER)) {
     _add_blocks(state);
-  }
-
-  for (Memcell *m = state->memspaces.first; m; m = m->next) {
-    Memspace *s = m->point;
-
-    for (Memcell *_m = s->contents->first; _m; _m = _m->next) {
-      TestTynmemEntity *e = _m->point;
-
-      e->x += GetRandomValue(-1, 1);
-      e->y += GetRandomValue(-1, 1);
-    }
   }
 
   return flags;
@@ -184,7 +177,21 @@ static void _draw(TestTynmemState *state) {
   }
 
   DrawText(TextFormat("Memspaces count: %d", state->memspaces.count), 190, 2, 10, BLACK);
-	MemspaceUpdate(state->memspaces.first->point, step_entity);
+	MemspaceUpdate(&state->memspaces, step_entity);
+
+  for (Memcell *m = state->memspaces.first; m; m = m->next) {
+		const Memspace *memspace = m->point;
+		const Tynvec2 min = memspace->bounds.min;
+		const Tynvec2 max = memspace->bounds.max;
+		if (memspace->depth == 0) {
+			DrawRectangleLines(min.x, min.y, max.x - min.x, max.y - min.y, RED);
+		} else if (memspace->depth % 2 == 0) {
+			DrawLine(max.x, min.y, max.x, max.y, BLUE);
+		} else if (memspace->depth % 2 == 1) {
+			DrawLine(min.x, max.y, max.x, max.y, BLUE);
+		}
+
+	}
 
 	/*
   for (Memcell *m = state->memspaces.first; m; m = m->next) {

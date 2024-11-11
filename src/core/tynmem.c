@@ -42,11 +42,13 @@ Mempool *MempoolInit(Mempool *mempool, unsigned short int cellsize) {
 }
 
 void MempoolDispose(Mempool *mempool) {
-  for (Memcell *m = mempool->mem->first; m; m = m->next) {
-    Memcell *_m0 = m->point; // memcell pool array
-    void *mem = _m0->point;  // actual data memory block
-    free(mem);
-  }
+	if (mempool->cellsize) {
+		for (Memcell *m = mempool->mem->first; m; m = m->next) {
+			Memcell *_m0 = m->point; // memcell pool array
+			void *mem = _m0->point;  // actual data memory block
+			free(mem);
+		}
+	}
   MemblockDispose(mempool->mem);
   free(mempool->pool);
   free(mempool);
