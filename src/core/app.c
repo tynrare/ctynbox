@@ -97,7 +97,8 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
     " > close stage \n > exit\n";
   } else if (strcmp(command, "?play") == 0) {
     return "type: 'cd X'; where X:\n"
-            " game0, maze, shadertest0, \n networktest0, collisiontest0, platformer0.\n"        
+            " game0, maze, shadertest0, \n networktest0, collisiontest0, platformer0, \
+						memtest0.\n"        
            "\ndisabled:\n editor\n rendertest0";
   } else if (strcmp(command, "?time") == 0) {
     return "4:20";
@@ -128,6 +129,10 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
     AppCleanupStages(state);
     //AppNewStage(state, TestRender0Init);
     return "wip render test";
+  } else if (strcmp(command, "cd memtest0") == 0) {
+    AppCleanupStages(state);
+		AppNewStage(state, TestTynmemInit);
+    return "memory pools, trees test";
   } else if (strcmp(command, "cd collisiontest0") == 0) {
     AppCleanupStages(state);
     AppNewStage(state, TestCollisions0Init);

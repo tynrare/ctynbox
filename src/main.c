@@ -1,9 +1,8 @@
 #include "raylib.h"
 #include "include/app.h"
-#include <stdio.h>
-
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
+#include <stdio.h>
 #endif
 
 //----------------------------------------------------------------------------------
@@ -68,7 +67,6 @@ int main() {
 #endif
   SetTargetFPS(60);
 
-  state = AppInit(&stage);
   SetRandomSeed(seed);
 
   state = AppInit(&stage);

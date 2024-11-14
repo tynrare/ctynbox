@@ -6,7 +6,7 @@ rm -rf pub/web
 mkdir -p pub/web
 
 
-emcc src/*.c -g3 \
+emcc src/*.c src/**/*.c -g3 \
 	-o pub/web/index.html \
 	--shell-file shell_minimal.html \
 	--preload-file res \

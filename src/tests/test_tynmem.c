@@ -84,7 +84,7 @@ static void step_entity(Memcell *memcell) {
 }
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
-  if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyDown(KEY_SPACE) ||
+  if ((IsKeyDown(KEY_LEFT_SHIFT) && IsKeyDown(KEY_SPACE)) ||
       IsKeyPressed(KEY_SPACE)) {
     int i = GetRandomValue(0, state->memblock.count - 1);
     Memcell *memcell = MemcellGet(&state->memblock, i);
