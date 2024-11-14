@@ -1,6 +1,5 @@
 #include "../include/test_tynmem.h"
 
-#include <raylib.h>
 #include <raymath.h>
 #include <stdlib.h>
 
@@ -25,6 +24,7 @@ TestTynmemState *TestTynmemInit(TynStage *stage) {
   return stage->state;
 }
 
+// first test iteration
 static void _add_blocks(TestTynmemState *state) {
   Memblock *memblock = &state->memblock;
 
@@ -38,100 +38,33 @@ static void _add_blocks(TestTynmemState *state) {
   }
 }
 
-static float memspace_radius = 16;
-
-static Memspace *_add_memspace(TestTynmemState *state) {
-  Memblock *memblock = &state->memspaces;
-	Memspace *memspace = MemspaceAllocate(memblock);
-
-	return memspace;
-}
-
-static void _reassign_memspace(TestTynmemState *state, Memcell *spacecell, Memcell *entitycell) {
-	return;
-	/*
-  TestTynmemEntity *entity = entitycell->point;
-  Memspace *memspace = spacecell->point;
-  Vector2 v1 = {0};
-  Vector2 v2 = {0};
-  Vector2 v3 = {0};
-  v1.x = memspace->x;
-  v1.y = memspace->y;
-  v2.x = entity->x;
-  v2.y = entity->y;
-
-  const float d1 = Vector2Distance(v1, v2);
-  if (d1 < memspace_radius) {
-    return;
-  }
-  Memspace *neighbour = 0;
-  float d2 = memspace_radius * 0xffff;
-  for (Memcell *m = memspace->neighbours->first; m; m = m->next) {
-    Memspace *n = m->point;
-    v3.x = n->x;
-    v3.y = n->y;
-    const float _d2 = Vector2Distance(v2, v3);
-    if (_d2 < d1) {
-      d2 = _d2;
-			neighbour = n;
-    }
-  }
-
-	MemcellDel(memspace->contents, entitycell);
-
-  if (!neighbour) {
-		Vector2 d = Vector2Normalize(Vector2Subtract(v2, v1));
-		d.x = roundf(d.x);
-		d.y = roundf(d.y);
-
-		neighbour = _add_memspace(state);
-
-		neighbour->x = memspace->x + d.x * memspace_radius / 0.707;
-		neighbour->y = memspace->y + d.y * memspace_radius / 0.707;
-
-		Memcell *nlink = MemcellAllocate(neighbour->neighbours);
-		nlink->point = memspace;
-
-		for (Memcell *m = memspace->neighbours->first; m; m = m->next) {
-			Memspace *n = m->point;
-			v3.x = n->x;
-			v3.y = n->y;
-			const float _d2 = Vector2Distance(v1, v3);
-			if (_d2 < memspace_radius + 1) {
-				Memcell *_nlink = MemcellAllocate(neighbour->neighbours);
-				_nlink->point = n;
-			}
-		}
-
-		Memcell *mlink = MemcellAllocate(memspace->neighbours);
-		mlink->point = neighbour;
-  } 
-
-	Memcell *elink = MemcellAllocate(neighbour->contents);
-	elink->point = entity;
-	*/
-}
-
+// second test iteration
 static void _add_entities(TestTynmemState *state) {
   Memblock *memblock = &state->entities;
   Memspace *memspace = state->memspaces.first->point;
 
-  for (int i = 0; i < 16; i++) {
+  for (int i = 0; i < 64; i++) {
     Memcell *memcell = MemcellAllocate(memblock);
     TestTynmemEntity *e = memcell->point;
-    e->x = 256;
-    e->y = 256;
-		MemspaceAssign(memspace, memcell);
+		MemspaceAssign(memspace, memcell, &e->pos);
+
+    e->pos.x = 256;
+    e->pos.y = 256;
+    Color *c = &e->color;
+    c->a = 255;
+    c->r = GetRandomValue(0, 255);
+    c->g = GetRandomValue(0, 255);
+    c->b = GetRandomValue(0, 255);
   }
 }
 
 static void _init(TestTynmemState *state) {
-  Memblock *memblock = MemblockInit(&state->memblock, sizeof(Color));
-  Memblock *memspaces = MemblockInit(&state->memspaces, sizeof(Memspace));
   Memblock *entities = MemblockInit(&state->entities, sizeof(TestTynmemEntity));
+  Memblock *memspaces = MemblockInit(&state->memspaces, sizeof(Memspace));
+	MemspaceAllocate(memspaces);
 
-  _add_blocks(state);
-  _add_memspace(state);
+  Memblock *memblock = MemblockInit(&state->memblock, sizeof(Color)); // first test iteration legacy
+  //_add_blocks(state);
   _add_entities(state);
 }
 
@@ -139,15 +72,15 @@ static void _dispose(TestTynmemState *state) {
   MemblockDispose(&state->memblock);
   MemblockDispose(&state->entities);
 	MemspaceDispose(&state->memspaces);
+  MemblockDispose(&state->memspaces);
+	free(state);
 }
 
-static Tynvec2 step_entity(Memcell *memcell) {
+static void step_entity(Memcell *memcell) {
 	TestTynmemEntity *e = memcell->point;
-	DrawRectangle(e->x - 2, e->y - 2, 4, 4, RED);
-	e->x += GetRandomValue(-1, 1);
-	e->y += GetRandomValue(-1, 1);
-
-	return (Tynvec2){ e->x, e->y };
+	DrawRectangle(e->pos.x - 2, e->pos.y - 2, 4, 4, e->color);
+	e->pos.x += GetRandomValue(-1, 1);
+	e->pos.y += GetRandomValue(-1, 1);
 }
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
@@ -158,10 +91,32 @@ static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
     if (memcell) {
       MemcellDel(&state->memblock, memcell);
     }
+		/*
+		for (Memcell *m = state->memblock.first; m; ) {
+			Memcell *n = m->next;
+			if (GetRandomValue(0, 5) == 0) {
+				MemcellDel(&state->memblock, m);
+			}
+			m = n;
+		}
+		*/
   }
   if (IsKeyDown(KEY_ENTER)) {
     _add_blocks(state);
   }
+
+	// Spams reallocations. Leak test
+  if (IsKeyDown(KEY_P)) {
+		Memblock m = { 0 };
+		MemblockInit(&m, sizeof(Memspace));
+		for (int i = 0; i < 100; i++) {
+			//MemcellAllocate(&m);
+			Memspace *memspace = MemspaceAllocate(&m);
+			MemspaceSplit(&m, memspace);
+		}
+		MemspaceDispose(&m);
+		MemblockDispose(&m);
+	}
 
   return flags;
 }
@@ -179,6 +134,7 @@ static void _draw(TestTynmemState *state) {
   DrawText(TextFormat("Memspaces count: %d", state->memspaces.count), 190, 2, 10, BLACK);
 	MemspaceUpdate(&state->memspaces, step_entity);
 
+  index = 0;
   for (Memcell *m = state->memspaces.first; m; m = m->next) {
 		const Memspace *memspace = m->point;
 		const Tynvec2 min = memspace->bounds.min;
@@ -190,20 +146,7 @@ static void _draw(TestTynmemState *state) {
 		} else if (memspace->depth % 2 == 1) {
 			DrawLine(min.x, max.y, max.x, max.y, BLUE);
 		}
-
 	}
-
-	/*
-  for (Memcell *m = state->memspaces.first; m; m = m->next) {
-    Memspace *s = m->point;
-    DrawCircleLines(s->x, s->y, memspace_radius, Fade(BLUE, 0.3));
-    for (Memcell *_m = s->contents->first; _m; _m = _m->next) {
-      TestTynmemEntity *e = _m->point;
-      DrawRectangle(e->x - 2, e->y - 2, 4, 4, RED);
-      DrawLine(s->x, s->y, e->x, e->y, GREEN);
-    }
-  }
-	*/
 
   DrawText(TextFormat("POOL shrink: unimplemented."), 16, 2, 10, BLACK);
   DrawText(TextFormat("t#1. Memory blocks allocated: %d",

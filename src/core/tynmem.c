@@ -38,7 +38,7 @@ Mempool *MempoolInit(Mempool *mempool, unsigned short int cellsize) {
   _memblock_init(mempool->mem);
   _memblock_init(mempool->pool);
 
-  return MempoolExtend(mempool);
+  return mempool;
 }
 
 void MempoolDispose(Mempool *mempool) {
@@ -50,6 +50,7 @@ void MempoolDispose(Mempool *mempool) {
 		}
 	}
   MemblockDispose(mempool->mem);
+  free(mempool->mem);
   free(mempool->pool);
   free(mempool);
 }
@@ -66,12 +67,12 @@ void MemblockDispose(Memblock *memblock) {
     return;
   }
 
-  for (Memcell *m = memblock->first; m; m = m->next) {
+  for (Memcell *m = memblock->first; m; ) {
+		Memcell *n = m->next;
     free(m->point);
     free(m);
+		m = n;
   }
-
-  free(memblock);
 }
 
 Mempool *MempoolExtend(Mempool *mempool) {

@@ -2,12 +2,14 @@
 #include "tynmem.h"
 #include "tynmemspace.h"
 
+#include <raylib.h>
+
 #ifndef TEST_TYNMEM0_H
 #define TEST_TYNMEM0_H
 
 typedef struct {
-	float x;
-	float y;
+	Tynvec2 pos;
+	Color color;
 } TestTynmemEntity;
 
 typedef struct {
