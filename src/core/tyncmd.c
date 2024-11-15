@@ -68,15 +68,21 @@ char *Console_Print(ConsoleState* state, char* message) {
 void Console_UpdateDrawFrame(ConsoleState *state) {
   DrawRectangle(1, 1, GetScreenWidth() - 2,
                 CONSOLE_LINE_HEIGHT * CONSOLE_HEIGHT, (Color){ 0, 0, 0, 100 });
-  DrawRectangleLines(1, 1 + CONSOLE_LINE_HEIGHT * (CONSOLE_HEIGHT - 1),
-                     GetScreenWidth() - 2, CONSOLE_LINE_HEIGHT, GREEN);
-  DrawText(TextFormat("< %s", state->inputstring), 5,
-           CONSOLE_LINE_HEIGHT * (CONSOLE_HEIGHT - 1) + 2, CONSOLE_LINE_HEIGHT,
-           WHITE);
+
   DrawText(TextFormat("> %s\n", state->inputcommand), 5, 2, CONSOLE_LINE_HEIGHT,
            WHITE);
   DrawText(TextFormat("%s", state->outputstring), 10, CONSOLE_LINE_HEIGHT + 2,
            CONSOLE_LINE_HEIGHT,
+           WHITE);
+
+  DrawRectangle(1, 1 + CONSOLE_LINE_HEIGHT * (CONSOLE_HEIGHT - 1),
+                     GetScreenWidth() - 2, CONSOLE_LINE_HEIGHT, Fade(BLACK, 0.5));
+  DrawRectangleLines(1, 1 + CONSOLE_LINE_HEIGHT * (CONSOLE_HEIGHT - 1),
+                     GetScreenWidth() - 2, CONSOLE_LINE_HEIGHT, GREEN);
+
+
+  DrawText(TextFormat("< %s", state->inputstring), 5,
+           CONSOLE_LINE_HEIGHT * (CONSOLE_HEIGHT - 1) + 2, CONSOLE_LINE_HEIGHT,
            WHITE);
 }
 
@@ -86,7 +92,7 @@ void Console_Init(TynStage *stage) {
   state->inputstring[0] = '\0';
   state->inputcommand[0] = '\0';
   state->outputstring[0] = '\0';
-  strcpy(state->outputstring, "type [? ENTER]");
+  strcpy(state->outputstring, "do not type < ?");
   state->inputlength = 0;
   state->ready = false;
 

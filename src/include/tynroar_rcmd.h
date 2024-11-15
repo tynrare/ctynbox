@@ -1,10 +1,10 @@
 #include <stdbool.h>
 #include "tynroar_lib.h"
 
-#define CONSOLE_HEIGHT 16
+#define CONSOLE_HEIGHT 15
 #define CONSOLE_LINE_HEIGHT 20
 #define CONSOLE_MAX_CHARS 20
-#define CONSOLE_OUTPUT_MAX_CHARS 200
+#define CONSOLE_OUTPUT_MAX_CHARS 100
 
 #ifndef TYNROAR_RCMD_H
 #define TYNROAR_RCMD_H

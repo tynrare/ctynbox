@@ -1,4 +1,4 @@
-#include "../include/game_base.h"
+#include "./include/game_base.h"
 #include "raymath.h"
 
 Sprite SpriteLoad(const char *fileName) {

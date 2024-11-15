@@ -10,7 +10,7 @@ typedef struct Memcell {
 	int poolindex;
 } Memcell;
 
-#define MEMPOOL_SIZE 8
+#define MEMPOOL_SIZE 1024
 
 typedef struct Memblock {
 	struct Memcell *first;

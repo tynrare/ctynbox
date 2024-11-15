@@ -10,6 +10,7 @@
 #include "../include/test_collisions_0.h"
 #include "../include/game_platformer_0.h"
 #include "../include/test_tynmem.h"
+#include "../include/demo_boids0.h"
 
 #include "../include/tyncommons.h"
 #include <raylib.h>
@@ -32,6 +33,7 @@ AppState *AppInit(TynStage *stage) {
   AppNewStage(state, Console_Init);
   //AppNewStage(state, GSpaceexp_Init);
   AppNewStage(state, TestTynmemInit);
+  //AppNewStage(state, DemoBoids0Init);
   //AppNewStage(state, draft0_init);
   //AppNewStage(state, editor0_init);
   //AppNewStage(state, GamePlatformer0Init);
@@ -91,7 +93,14 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
     CloseWindow();
     *flags |= STAGEFLAG_DISABLED;
   } else if (strcmp(command, "?") == 0) {
-    return "info commands:\n"
+    return "keys:\n"
+    "TAB: cmd\n"
+    "ENTER: Spawn\n"
+    "SPACE: Dellocate\n"
+		"\ninfo commands:\n"
+    " > ?time\n > ?play\n > ?maze\n"
+    " > ?time\n > ?play\n > ?maze\n"
+    " > ?time\n > ?play\n > ?maze\n"
     " > ?time\n > ?play\n > ?maze\n"
     "\naction commands:\n"
     " > close stage \n > exit\n";

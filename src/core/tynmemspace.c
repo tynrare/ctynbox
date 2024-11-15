@@ -52,6 +52,8 @@ Memblock *MemspaceCollapse(Memblock *memblock, Memspace *memspace) {
 			Memcell *_n = _m->next;
 			Memcell *memlink_b = MemcellAllocate(&memspace->contents_direct);
 			memlink_b->point = _m->point;
+			MemspaceLink *memslink = _m->point;
+			memslink->memspace = memspace;
 			MemcellDel(&subspace->contents_direct, _m);
 			_m = _n;
 		}
@@ -95,7 +97,7 @@ static Memspace *_memspace_update_subspace(Memblock *memblock,
 
   // update contents
   for (Memcell *m = memspace->contents_direct.first; m;) {
-    const Tynbounds2d *bounds = &memspace->bounds;
+    const Tynbounds2 *bounds = &memspace->bounds;
     MemspaceLink *memslink = m->point;
     const Tynvec2 *pos = memslink->pos;
 
@@ -107,6 +109,7 @@ static Memspace *_memspace_update_subspace(Memblock *memblock,
       if (memspace->up) {
         Memcell *memlink_b = MemcellAllocate(&memspace->up->contents_direct);
         memlink_b->point = memslink;
+				memslink->memspace = memspace->up;
         MemcellDel(&memspace->contents_direct, m);
 				memspace->count -= 1;
       }
@@ -114,12 +117,13 @@ static Memspace *_memspace_update_subspace(Memblock *memblock,
       // move link down - into subspaces
       for (Memcell *_m = memspace->subspaces.first; _m; _m = _m->next) {
         Memspace *subspace = _m->point;
-        const Tynbounds2d *sbounds = &subspace->bounds;
+        const Tynbounds2 *sbounds = &subspace->bounds;
         if (sbounds->min.x < pos->x && sbounds->min.y < pos->y &&
             sbounds->max.x > pos->x && sbounds->max.y > pos->y) {
           Memcell *memlink_b = MemcellAllocate(&subspace->contents_direct);
           memlink_b->point = memslink;
           MemcellDel(&memspace->contents_direct, m);
+					memslink->memspace = subspace;
 					subspace->count += 1;
           break;
         }
@@ -186,8 +190,14 @@ Memspace *MemspaceAssign(Memspace *memspace, Memcell *memcell, Tynvec2 *pos) {
   MemspaceLink *memslink = memlink_a->point;
   memslink->link = memcell;
   memslink->pos = pos;
+  memslink->memspace = memspace;
   Memcell *memlink_b = MemcellAllocate(&memspace->contents_direct);
   memlink_b->point = memslink;
 
   return memspace;
+}
+
+Memblock *MemspaceFind(Memspace *memspace, Memblock *buffer, Tynbounds2 rec) {
+
+	return buffer;
 }
