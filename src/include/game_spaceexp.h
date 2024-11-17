@@ -1,6 +1,6 @@
 #include "raylib.h"
 #include "tynroar_lib.h"
-#include "game_base.h"
+#include "sprite.h"
 
 //GAME231012_H
 #ifndef GAME231012_H

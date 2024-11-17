@@ -149,7 +149,7 @@ static Memspace *_memspace_update_subspace(Memblock *memblock,
   return memspace;
 }
 
-Memspace *MemspaceUpdate(Memblock *memblock, void (*step)(Memcell *)) {
+Memspace *MemspaceUpdate(Memblock *memblock, void (*step)(Memcell *, Memspace *memspace)) {
   Memspace *memspace = memblock->first->point;
   Tynvec2 *bmax = &memspace->bounds.max;
   Tynvec2 *bmin = &memspace->bounds.min;
@@ -176,7 +176,7 @@ Memspace *MemspaceUpdate(Memblock *memblock, void (*step)(Memcell *)) {
       bmin->y = pos->y;
     }
 
-    step(memslink->link);
+    step(memslink->link, memslink->memspace);
   }
 
   _memspace_update_subspace(memblock, memspace);

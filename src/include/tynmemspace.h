@@ -13,8 +13,8 @@ typedef struct Tynbounds2 {
   struct Tynvec2 max;
 } Tynbounds2;
 
-#define MEMSPACE_MAX_CONTENTS_COUNT 1
-#define MEMSPACE_MAX_DEPTH 1
+#define MEMSPACE_MAX_CONTENTS_COUNT 4
+#define MEMSPACE_MAX_DEPTH 4
 
 typedef struct Memspace {
 	struct Memcell *self;
@@ -39,7 +39,7 @@ Memspace *MemspaceAllocate(Memblock *memblock);
 void MemspaceDispose(Memblock *memblock);
 Memblock *MemspaceSplit(Memblock *memblock, Memspace *memspace);
 Memblock *MemspaceCollapse(Memblock *memblock, Memspace *memspace);
-Memspace *MemspaceUpdate(Memblock *memblock, void (*step)(Memcell *));
+Memspace *MemspaceUpdate(Memblock *memblock, void (*step)(Memcell *, Memspace *memspace));
 Memspace *MemspaceAssign(Memspace *memspace, Memcell *memcell, Tynvec2 *pos);
 Memblock *MemspaceFind(Memspace *memspace, Memblock *buffer, Tynbounds2 rec);
 

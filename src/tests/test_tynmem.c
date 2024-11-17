@@ -47,7 +47,7 @@ static void _add_entities(TestTynmemState *state) {
   for (int i = 0; i < 1024; i++) {
     Memcell *memcell = MemcellAllocate(memblock);
     TestTynmemEntity *e = memcell->point;
-		MemspaceAssign(memspace, memcell, &e->pos);
+    MemspaceAssign(memspace, memcell, &e->pos);
 
     e->pos.x = 256;
     e->pos.y = 256;
@@ -62,19 +62,20 @@ static void _add_entities(TestTynmemState *state) {
 static void _init(TestTynmemState *state) {
   Memblock *entities = MemblockInit(&state->entities, sizeof(TestTynmemEntity));
   Memblock *memspaces = MemblockInit(&state->memspaces, sizeof(Memspace));
-	MemspaceAllocate(memspaces);
+  MemspaceAllocate(memspaces);
   _add_entities(state);
 
-  Memblock *memblock = MemblockInit(&state->memblock, sizeof(Color)); // first test iteration legacy
+  Memblock *memblock = MemblockInit(
+      &state->memblock, sizeof(Color)); // first test iteration legacy
   //_add_blocks(state);
 }
 
 static void _dispose(TestTynmemState *state) {
   MemblockDispose(&state->memblock);
   MemblockDispose(&state->entities);
-	MemspaceDispose(&state->memspaces);
+  MemspaceDispose(&state->memspaces);
   MemblockDispose(&state->memspaces);
-	free(state);
+  free(state);
 }
 
 static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
@@ -85,44 +86,44 @@ static STAGEFLAG _step(TestTynmemState *state, STAGEFLAG flags) {
     if (memcell) {
       MemcellDel(&state->memblock, memcell);
     }
-		/*
-		for (Memcell *m = state->memblock.first; m; ) {
-			Memcell *n = m->next;
-			if (GetRandomValue(0, 5) == 0) {
-				MemcellDel(&state->memblock, m);
-			}
-			m = n;
-		}
-		*/
+    /*
+    for (Memcell *m = state->memblock.first; m; ) {
+            Memcell *n = m->next;
+            if (GetRandomValue(0, 5) == 0) {
+                    MemcellDel(&state->memblock, m);
+            }
+            m = n;
+    }
+    */
   }
   if (IsKeyDown(KEY_ENTER)) {
     _add_blocks(state);
   }
 
-	// Spams reallocations. Leak test
+  // Spams reallocations. Leak test
   if (IsKeyDown(KEY_P)) {
-		Memblock m = { 0 };
-		MemblockInit(&m, sizeof(Memspace));
-		for (int i = 0; i < 100; i++) {
-			//MemcellAllocate(&m);
-			Memspace *memspace = MemspaceAllocate(&m);
-			MemspaceSplit(&m, memspace);
-		}
-		MemspaceDispose(&m);
-		MemblockDispose(&m);
-	}
+    Memblock m = {0};
+    MemblockInit(&m, sizeof(Memspace));
+    for (int i = 0; i < 100; i++) {
+      // MemcellAllocate(&m);
+      Memspace *memspace = MemspaceAllocate(&m);
+      MemspaceSplit(&m, memspace);
+    }
+    MemspaceDispose(&m);
+    MemblockDispose(&m);
+  }
 
   return flags;
 }
 
 static int drawn = 0;
 
-static void draw_ant(Memcell *memcell) {
-	TestTynmemEntity *e = memcell->point;
-	DrawRectangle(e->pos.x - 2, e->pos.y - 2, 4, 4, e->color);
-	e->pos.x += GetRandomValue(-1, 1);
-	e->pos.y += GetRandomValue(-1, 1);
-	drawn += 1;
+static void draw_ant(Memcell *memcell, Memspace *memspace) {
+  TestTynmemEntity *e = memcell->point;
+  DrawRectangle(e->pos.x - 2, e->pos.y - 2, 4, 4, e->color);
+  e->pos.x += GetRandomValue(-1, 1);
+  e->pos.y += GetRandomValue(-1, 1);
+  drawn += 1;
 }
 static void _draw(TestTynmemState *state) {
   int index = 0;
@@ -134,24 +135,25 @@ static void _draw(TestTynmemState *state) {
     index += 1;
   }
 
-  DrawText(TextFormat("Memspaces count: %d", state->memspaces.count), 190, 2, 10, BLACK);
-	drawn = 0;
-	MemspaceUpdate(&state->memspaces, draw_ant);
+  DrawText(TextFormat("Memspaces count: %d", state->memspaces.count), 190, 2,
+           10, BLACK);
+  drawn = 0;
+  MemspaceUpdate(&state->memspaces, draw_ant);
   DrawText(TextFormat("Ants drawn: %d", drawn), 190, 12, 10, BLACK);
 
   index = 0;
   for (Memcell *m = state->memspaces.first; m; m = m->next) {
-		const Memspace *memspace = m->point;
-		const Tynvec2 min = memspace->bounds.min;
-		const Tynvec2 max = memspace->bounds.max;
-		if (memspace->depth == 0) {
-			DrawRectangleLines(min.x, min.y, max.x - min.x, max.y - min.y, RED);
-		} else if (memspace->depth % 2 == 0) {
-			DrawLine(max.x, min.y, max.x, max.y, BLUE);
-		} else if (memspace->depth % 2 == 1) {
-			DrawLine(min.x, max.y, max.x, max.y, BLUE);
-		}
-	}
+    const Memspace *memspace = m->point;
+    const Tynvec2 min = memspace->bounds.min;
+    const Tynvec2 max = memspace->bounds.max;
+    if (memspace->depth == 0) {
+      DrawRectangleLines(min.x, min.y, max.x - min.x, max.y - min.y, RED);
+    } else if (memspace->depth % 2 == 0) {
+      DrawLine(max.x, min.y, max.x, max.y, BLUE);
+    } else if (memspace->depth % 2 == 1) {
+      DrawLine(min.x, max.y, max.x, max.y, BLUE);
+    }
+  }
 
   DrawText(TextFormat("POOL shrink: unimplemented."), 16, 2, 10, BLACK);
   DrawText(TextFormat("t#1. Memory blocks allocated: %d",
@@ -161,15 +163,26 @@ static void _draw(TestTynmemState *state) {
                       state->memblock.mempool->pool->count),
            16, 32, 20, GREEN);
 
-	Vector2 mpos = GetMousePosition();
-	int recsize = 32;
-	DrawRectangleLines(mpos.x - recsize * 0.5, mpos.y - recsize * 0.5, recsize, recsize, BLUE);
+  Vector2 mpos = GetMousePosition();
+  int recsize = 32;
+  DrawRectangleLines(mpos.x - recsize * 0.5, mpos.y - recsize * 0.5, recsize,
+                     recsize, BLUE);
+
+  for (int y = 0; y < 8; y++) {
+    int f = 12 + y * 4;
+    DrawText(TextFormat("POOL shrink: unimplemented."), 12,
+             GetScreenHeight() - f * y - 12, f, Fade(BLACK, 0.2));
+  }
 }
 
 static char *_cmdin(TestTynmemState *state, STAGEFLAG *flags) { return NULL; }
 
-static char *_cmdout(TestTynmemState *state, char *message) { 
-  if (strcmp(message, "?") == 0) {
-		return "@@";
-	}
-	return message; }
+static char *_cmdout(TestTynmemState *state, char *message) {
+  if (strcmp(message, "??") == 0) {
+    return "keys:\n"
+    "TAB: cmd\n"
+    "ENTER: Spawn\n"
+    "SPACE: Dellocate\n";
+  }
+  return message;
+}

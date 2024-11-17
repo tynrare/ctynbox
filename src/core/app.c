@@ -32,8 +32,8 @@ AppState *AppInit(TynStage *stage) {
 
   AppNewStage(state, Console_Init);
   //AppNewStage(state, GSpaceexp_Init);
-  AppNewStage(state, TestTynmemInit);
-  //AppNewStage(state, DemoBoids0Init);
+  //AppNewStage(state, TestTynmemInit);
+  AppNewStage(state, DemoBoids0Init);
   //AppNewStage(state, draft0_init);
   //AppNewStage(state, editor0_init);
   //AppNewStage(state, GamePlatformer0Init);
@@ -93,14 +93,9 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
     CloseWindow();
     *flags |= STAGEFLAG_DISABLED;
   } else if (strcmp(command, "?") == 0) {
-    return "keys:\n"
-    "TAB: cmd\n"
-    "ENTER: Spawn\n"
-    "SPACE: Dellocate\n"
-		"\ninfo commands:\n"
-    " > ?time\n > ?play\n > ?maze\n"
-    " > ?time\n > ?play\n > ?maze\n"
-    " > ?time\n > ?play\n > ?maze\n"
+    return "\ninfo commands:\n"
+    " > ? - this message\n"
+    " > ?? - current state info message\n"
     " > ?time\n > ?play\n > ?maze\n"
     "\naction commands:\n"
     " > close stage \n > exit\n";
@@ -191,9 +186,11 @@ STAGEFLAG AppStep(AppState *state, STAGEFLAG flags) {
       // get command from frame
       char *message = stage->frame.cmdin(stage->state, &flag);
       if (message) {
+				TraceLog(LOG_INFO, TextFormat("cmdin: \n%s", message));
         char *response = cmd(state, message, &flags);
         // response to command
         if (response && stage->frame.cmdout) {
+					TraceLog(LOG_INFO, TextFormat("cmdout: \n\n%s", response));
           stage->frame.cmdout(stage->state, response);
         }
       }

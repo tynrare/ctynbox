@@ -1,6 +1,7 @@
 #include "tynroar_lib.h"
 #include "tynmem.h"
 #include "tynmemspace.h"
+#include "sprite.h"
 
 #include <raylib.h>
 
@@ -8,12 +9,18 @@
 #define DEMO_BOIDS0_H
 
 typedef struct {
-	Tynvec2 pos;
+	Vector2 *pos;
+	Vector2 direction;
+	float speed;
+	float torque;
+	float acceleration;
+	Sprite sprite;
 } DemoBoid0;
 
 typedef struct {
 	Memblock memspaces;
-	Memblock boids;
+	Memblock memblock;
+	Texture texture_boid;
 } DemoBoids0State;
 
 DemoBoids0State* DemoBoids0Init(TynStage* stage);
