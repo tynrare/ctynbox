@@ -101,8 +101,8 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
     " > close stage \n > exit\n";
   } else if (strcmp(command, "?play") == 0) {
     return "type: 'cd X'; where X:\n"
-            " game0, maze, shadertest0, \n networktest0, collisiontest0, platformer0, \
-						memtest0.\n"        
+            " game0, maze, shadertest0, \n networktest0, collisiontest0, platformer0,\n "
+						"memtest0, boids0.\n"        
            "\ndisabled:\n editor\n rendertest0";
   } else if (strcmp(command, "?time") == 0) {
     return "4:20";
@@ -144,6 +144,10 @@ static char *cmd(AppState *state, char *command, STAGEFLAG *flags) {
   } else if (strcmp(command, "cd platformer0") == 0) {
     AppCleanupStages(state);
     AppNewStage(state, GamePlatformer0Init);
+    return "platformer test";
+  } else if (strcmp(command, "cd boids0") == 0) {
+    AppCleanupStages(state);
+    AppNewStage(state, DemoBoids0Init);
     return "platformer test";
   } else if (strcmp(command, "close stage ..") == 0) {
     AppCleanupStages(state);
