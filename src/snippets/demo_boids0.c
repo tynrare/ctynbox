@@ -1,29 +1,30 @@
 #include "../include/demo_boids0.h"
 
 #include <raymath.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 Vector2 v2up = (Vector2){0, -1};
+
 #define BOIDS_AMOUNT 128
 
 #define BOID_VIEWDIST 100
 #define BOID_VIEWANGLE 100
-#define BOID_MOVE_SPEED 2
-#define BOID_ROT_MAX_SPEED 0.05
-#define BOID_ROT_SPEED 0.1
-#define BOID_ROT_ACCELERATION 0.1
-#define BOID_ACCELERATION 0.01
+#define BOID_ROT_MAX_SPEED 0.5
+#define BOID_ROT_SPEED 0.02
+#define BOID_ROT_ACCELERATION 0.3
+#define BOID_ACCELERATION 0.03
 
 #define BOID_COHESION_SPEED_FACTOR 2
 
+float BOID_MOVE_SPEED = 2;
 // classics boids rules. 0-1
-float BOID_ALIGMENT_FACTOR = 0.2;
-float BOID_COHESION_FACTOR = 0.6;
-float BOID_SEPARATION_FACTOR = 0.9;
+float BOID_ALIGMENT_FACTOR = 0.8;
+float BOID_COHESION_FACTOR = 2.8;
+float BOID_SEPARATION_FACTOR = 0.7;
 
-#define BOID_DEBUG false
+bool BOID_DEBUG = false;
 
 static void _dispose(DemoBoids0State *state);
 static STAGEFLAG _step(DemoBoids0State *state, STAGEFLAG flags);
@@ -59,7 +60,7 @@ static void draw_boid(Memcell *memcell, Memspace *memspace) {
 
   // rotate followind classic boids rules
   float rotation = Vector2Angle(v2up, boid->direction);
-  float aligment = 0;
+  float alignment = 0;
   float cohesion = 0;
   float separation = 0;
   Vector2 cohesion_center = *boid->pos;
@@ -82,8 +83,8 @@ static void draw_boid(Memcell *memcell, Memspace *memspace) {
       continue;
     }
 
-    aligment = rlerp(aligment, Vector2Angle(boid->direction, e->direction),
-                     1 - dfactor);
+    alignment = rlerp(alignment, Vector2Angle(boid->direction, e->direction),
+                      1 - dfactor);
     cohesion = rlerp(cohesion, dangle, 1 - dfactor);
     separation = -cohesion;
 
@@ -104,10 +105,10 @@ static void draw_boid(Memcell *memcell, Memspace *memspace) {
   // apply rotations
   float rotate = 0;
   // rotate = rlerp(rotate, separation, BOID_SEPARATION_FACTOR);
-  // rotate = rlerp(rotate, aligment, BOID_ALIGMENT_FACTOR);
+  // rotate = rlerp(rotate, alignment, BOID_ALIGMENT_FACTOR);
   // rotate = rlerp(rotate, cohesion, BOID_COHESION_FACTOR);
   rotate = rotate + separation * BOID_SEPARATION_FACTOR;
-  rotate = rotate + aligment * BOID_ALIGMENT_FACTOR;
+  rotate = rotate + alignment * BOID_ALIGMENT_FACTOR;
   rotate = rotate + cohesion * BOID_COHESION_FACTOR;
   float rotate_clamped =
       Clamp(rotate * BOID_ROT_SPEED, -BOID_ROT_MAX_SPEED, BOID_ROT_MAX_SPEED);
@@ -126,7 +127,7 @@ static void draw_boid(Memcell *memcell, Memspace *memspace) {
                                 BOID_COHESION_SPEED_FACTOR,
                             BOID_ACCELERATION);
 
-  float speed = boid->speed + boid->acceleration;
+  float speed = BOID_MOVE_SPEED + boid->acceleration;
 
   // rest of calcus
   boid->pos->x += boid->direction.x * speed;
@@ -165,7 +166,6 @@ static DemoBoid0 *add_boid(DemoBoids0State *state) {
   boid->pos->y = 256 + GetRandomValue(-256, 256);
   Vector2 dir = (Vector2){GetRandomValue(-256, 256), GetRandomValue(-256, 256)};
   boid->direction = Vector2Normalize(dir);
-  boid->speed = BOID_MOVE_SPEED;
   boid->torque = 0;
   boid->acceleration = 0;
 
@@ -234,27 +234,33 @@ static void _draw(DemoBoids0State *state) {
 
 static char *_cmdin(DemoBoids0State *state, STAGEFLAG *flags) { return NULL; }
 
-static char *_cmdout(DemoBoids0State *state, char *message) { 
+static char *_cmdout(DemoBoids0State *state, char *message) {
   if (strcmp(message, "??") == 0) {
     return "commands:\n"
-    "al=x: set aligment \n"
-    "ch=x: set cohesion\n"
-    "sp=x: set separation\n";
+           "al=x: set alignment \n"
+           "ch=x: set cohesion\n"
+           "sp=x: set separation\n";
   }
 
-	char arg[3] = {0};
-	float val = 0;
-	if (sscanf(message, "%2s=%f", arg, &val) == 2) {
-		if (strcmp(arg, "al") == 0) {
-			BOID_ALIGMENT_FACTOR = val;
-		}
-		else if (strcmp(arg, "ch") == 0) {
-			BOID_COHESION_FACTOR = val;
-		}
-		else if (strcmp(arg, "sp") == 0) {
-			BOID_SEPARATION_FACTOR = val;
-		}
-	}
+  if (strcmp(message, "dbg") == 0) {
+    BOID_DEBUG = !BOID_DEBUG;
+  } else {
+    char arg[4] = {0};
+    float val = 0;
+    if (sscanf(message, "%3s=%f", arg, &val) == 2) {
+			TraceLog(LOG_INFO, arg);
+      if (strcmp(arg, "alg") == 0) {
+        BOID_ALIGMENT_FACTOR = val;
+      } else if (strcmp(arg, "coh") == 0) {
+        BOID_COHESION_FACTOR = val;
+      } else if (strcmp(arg, "sep") == 0) {
+        BOID_SEPARATION_FACTOR = val;
+      } else if (strcmp(arg, "spd") == 0) {
+        BOID_MOVE_SPEED = val;
+      }
 
-	return message; 
+    }
+  }
+
+  return message;
 }
