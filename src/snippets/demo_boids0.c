@@ -20,7 +20,7 @@ Vector2 v2up = (Vector2){0, -1};
 
 float BOID_MOVE_SPEED = 2;
 // classics boids rules. 0-1
-float BOID_ALIGMENT_FACTOR = 0.8;
+float BOID_ALIGMENT_FACTOR = 0.2;
 float BOID_COHESION_FACTOR = 2.8;
 float BOID_SEPARATION_FACTOR = 0.7;
 
