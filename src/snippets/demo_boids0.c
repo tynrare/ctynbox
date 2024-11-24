@@ -22,7 +22,9 @@ float BOID_MOVE_SPEED = 2;
 // classics boids rules. 0-1
 float BOID_ALIGMENT_FACTOR = 0.2;
 float BOID_COHESION_FACTOR = 2.8;
-float BOID_SEPARATION_FACTOR = 0.7;
+float BOID_SEPARATION_FACTOR = 2.7;
+float BOID_CENTRIC_FACTOR = 0.5;
+float BOID_COLLISION_DAMAGE = 0; // per sec
 
 bool BOID_DEBUG = false;
 
@@ -40,22 +42,23 @@ static float rlerp(float a, float b, float t) {
   return atan2f(SN, CS);
 }
 
-// boids copies direction
-static Vector2 boid_aligment(DemoBoid0 *boid, Memcell *neighbors) {
-  Vector2 dir;
-  for (Memcell *m = neighbors; m; m = m->next) {
-    DemoBoid0 *e = m->point;
-    dir = Vector2Lerp(dir, e->direction, 0.5);
-  }
-
-  return dir;
-}
-
-// move towards center of other boids
-static void boid_cohesion(DemoBoid0 *boid) {}
-
 static void draw_boid(Memcell *memcell, Memspace *memspace) {
   DemoBoid0 *boid = memcell->point;
+	if (boid->energy <= -1) {
+		return;
+	}
+
+	if (boid->energy <= 0) {
+		boid->energy -= 1 * GetFrameTime();
+		float e = 1 + boid->energy;
+		boid->sprite.color.a = e * 255;
+		boid->sprite.scale = e;
+		boid->pos->x += boid->direction.x * BOID_MOVE_SPEED * 0.5;
+		boid->pos->y += boid->direction.y * BOID_MOVE_SPEED * 0.5;
+		SpriteDraw(&boid->sprite);
+		return;
+	}
+
   Memcell *neighbors = memspace->contents_direct.first;
 
   // rotate followind classic boids rules
@@ -67,12 +70,20 @@ static void draw_boid(Memcell *memcell, Memspace *memspace) {
   for (Memcell *m = neighbors; m; m = m->next) {
     DemoBoid0 *e = m->point;
 
+		if (e->energy <= 0) {
+			continue;
+		}
+
     Vector2 delta = Vector2Subtract(*e->pos, *boid->pos);
     float dlength = Vector2Length(delta);
     float dfactor = dlength / BOID_VIEWDIST;
     if (dfactor > 1 || dfactor == 0) {
       continue;
     }
+
+		if (BOID_COLLISION_DAMAGE && dlength < 8) {
+			boid->energy -= BOID_COLLISION_DAMAGE * GetFrameTime();
+		}
 
     Vector2 ndelta = Vector2Normalize(delta);
 
@@ -102,6 +113,16 @@ static void draw_boid(Memcell *memcell, Memspace *memspace) {
     DrawRectangle(cohesion_center.x, cohesion_center.y, 4, 4, GREEN);
   }
 
+	float centric_rotate = 0;
+	if (BOID_CENTRIC_FACTOR && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+		//Vector2 center = { GetScreenWidth() * 0.5, GetScreenHeight() * 0.5 };
+		Vector2 center = GetMousePosition();
+		Vector2 delta = Vector2Subtract(center, *boid->pos);
+		Vector2 ndelta = Vector2Normalize(delta);
+		centric_rotate = Vector2Angle(boid->direction, ndelta);
+	}
+
+
   // apply rotations
   float rotate = 0;
   // rotate = rlerp(rotate, separation, BOID_SEPARATION_FACTOR);
@@ -110,6 +131,7 @@ static void draw_boid(Memcell *memcell, Memspace *memspace) {
   rotate = rotate + separation * BOID_SEPARATION_FACTOR;
   rotate = rotate + alignment * BOID_ALIGMENT_FACTOR;
   rotate = rotate + cohesion * BOID_COHESION_FACTOR;
+  rotate = rotate + centric_rotate * BOID_CENTRIC_FACTOR;
   float rotate_clamped =
       Clamp(rotate * BOID_ROT_SPEED, -BOID_ROT_MAX_SPEED, BOID_ROT_MAX_SPEED);
 
@@ -160,7 +182,7 @@ static DemoBoid0 *add_boid(DemoBoids0State *state) {
   MemspaceAssign(memspace, memcell, (Tynvec2 *)&boid->sprite.position);
 
   SpriteInit(&boid->sprite, state->texture_boid);
-  boid->sprite.scale = 0.5;
+  boid->sprite.scale = 1;
 
   boid->pos->x = 256 + GetRandomValue(-256, 256);
   boid->pos->y = 256 + GetRandomValue(-256, 256);
@@ -168,6 +190,7 @@ static DemoBoid0 *add_boid(DemoBoids0State *state) {
   boid->direction = Vector2Normalize(dir);
   boid->torque = 0;
   boid->acceleration = 0;
+	boid->energy = 1;
 
   return boid;
 }
@@ -257,6 +280,8 @@ static char *_cmdout(DemoBoids0State *state, char *message) {
         BOID_SEPARATION_FACTOR = val;
       } else if (strcmp(arg, "spd") == 0) {
         BOID_MOVE_SPEED = val;
+      } else if (strcmp(arg, "cen") == 0) {
+        BOID_CENTRIC_FACTOR = val;
       }
 
     }

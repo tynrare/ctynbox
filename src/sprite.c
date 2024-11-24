@@ -18,6 +18,7 @@ void SpriteInit(Sprite *s, Texture2D texture) {
   s->rotation = 0.0;
   s->scale = 1.0;
   s->texture = texture;
+	s->color = WHITE;
 }
 
 void SpriteDraw(Sprite *sprite) {
@@ -27,5 +28,5 @@ void SpriteDraw(Sprite *sprite) {
   const Vector2 v1 =
       (Vector2){sprite->position.x - v0.x, sprite->position.y - v0.y};
 
-  DrawTextureEx(sprite->texture, v1, sprite->rotation, sprite->scale, WHITE);
+  DrawTextureEx(sprite->texture, v1, sprite->rotation, sprite->scale, sprite->color);
 }

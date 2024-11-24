@@ -9,6 +9,7 @@ typedef struct Sprite {
 	Texture2D texture;
 	float rotation;
 	float scale;
+	Color color;
 } Sprite;
 
 Sprite SpriteLoad(const char* fileName);

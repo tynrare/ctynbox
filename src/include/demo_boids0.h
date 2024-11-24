@@ -14,6 +14,7 @@ typedef struct {
 	float torque;
 	float acceleration;
 	Sprite sprite;
+	float energy;
 } DemoBoid0;
 
 typedef struct {

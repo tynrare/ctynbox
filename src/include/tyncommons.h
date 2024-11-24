@@ -3,6 +3,7 @@
 #ifndef TYNCOMMONS_H
 #define TYNCOMMONS_H
 
+float AngleDifference(float angle1, float angle2);
 bool isAnyKeyPressed(int count, ...);
 int min(int a, int b);
 float lerp(float a, float b, float t);

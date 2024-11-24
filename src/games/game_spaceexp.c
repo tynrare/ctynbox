@@ -31,11 +31,6 @@ static Font font = {0};
   (Vector2) { 0, 1 }
 #endif
 
-float AngleDifference(float angle1, float angle2) {
-  double diff = ((int)angle2 - (int)angle1 + 180) % 360 - 180;
-  return diff < -180 ? diff + 360 : diff;
-}
-
 static void PawnWASDControls(struct GSpaceexp_PawnState *state,
                              struct GSpaceexp_PawnConfig *config);
 static void PawnPointerControls(struct GSpaceexp_PawnState *state,

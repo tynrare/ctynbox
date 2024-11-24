@@ -3,6 +3,11 @@
 #include "raylib.h"
 #include <math.h>
 
+float AngleDifference(float angle1, float angle2) {
+  double diff = ((int)angle2 - (int)angle1 + 180) % 360 - 180;
+  return diff < -180 ? diff + 360 : diff;
+}
+
 bool isAnyKeyPressed(int count, ...) {
   bool pressed = false;
 
