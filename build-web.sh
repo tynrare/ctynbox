@@ -10,8 +10,9 @@ emcc src/*.c src/**/*.c -g3 \
 	-o pub/web/index.html \
 	--shell-file shell_minimal.html \
 	--preload-file res \
-	-Os -Wall $path_raylib/src/libraylib.a -DPLATFORM_WEB \
+	-Os -Wall $path_raylib/src/libraylib.a -DPLATFORM_WEB -DGRAPHICS_API_OPENGL_ES3 \
 	-I. -I$path_raylib/src \
 	-L. -L$path_raylib/src \
 	-Wno-incompatible-function-pointer-types \
-	-s USE_GLFW=3 -s ASYNCIFY
+	-Wno-incompatible-pointer-types \
+	-s USE_GLFW=3 -s ASYNCIFY -s FULL_ES3=1

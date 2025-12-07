@@ -7,12 +7,15 @@
 #include <math.h>
 #include <time.h> // Required for: localtime(), asctime()
 
+/*
 #if defined(PLATFORM_WEB)
 #define GLSL_VERSION 100
 #else 
 #define GLSL_VERSION 330
 #endif
+*/
 
+#define GLSL_VERSION 330
 
 void TestShader0Dispose(TestShader0State *state);
 STAGEFLAG TestShader0Step(TestShader0State *state, STAGEFLAG flags);
